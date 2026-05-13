@@ -20,9 +20,9 @@ const CheckoutPage = () => {
   },[router])
   return (
     <Wrapper>
-      <SEO pageTitle="Checkout" />
+      <SEO pageTitle="Thanh toán" />
       <HeaderTwo style_2={true} />
-      <CommonBreadcrumb title="Checkout" subtitle="Checkout" bg_clr={true} />
+      <CommonBreadcrumb title="Thanh toán" subtitle="Thanh toán" bg_clr={true} />
       <CheckoutArea/>
       <Footer style_2={true} />
     </Wrapper>

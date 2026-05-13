@@ -76,7 +76,7 @@ const ShopArea = ({ all_products, products, otherProps }) => {
                     </div>
                   </div>
                 </div>
-                {products.length === 0 && <h2>No products found</h2>}
+                {products.length === 0 && <h2>Không tìm thấy sản phẩm nào</h2>}
                 {products.length > 0 && (
                   <div className="tp-shop-items-wrapper tp-shop-item-primary">
                     <div className="tab-content" id="productTabContent">

@@ -33,7 +33,7 @@ const ProfilePage = () => {
 
   return (
     <Wrapper>
-      <SEO pageTitle="Profile" />
+      <SEO pageTitle="Hồ sơ cá nhân" />
       <HeaderTwo style_2={true} />
       <ProfileArea orderData={orderData} />
       <Footer style_2={true} />

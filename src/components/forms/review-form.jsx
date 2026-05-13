@@ -33,7 +33,7 @@ const ReviewForm = ({product_id}) => {
   // on submit
   const onSubmit = (data) => {
     if(!user){
-      notifyError("Please login first");
+      notifyError("Vui lòng đăng nhập trước");
       return;
     }
     else {
@@ -44,9 +44,9 @@ const ReviewForm = ({product_id}) => {
         comment: data.comment,
       }).then((result) => {
         if (result?.error) {
-          notifyError(result?.error?.data?.message);
+          notifyError(result?.error?.data?.message || "Có lỗi xảy ra");
         } else {
-          notifySuccess(result?.data?.message);
+          notifySuccess(result?.data?.message || "Thành công");
         }
       });
     }
@@ -56,7 +56,7 @@ const ReviewForm = ({product_id}) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="tp-product-details-review-form-rating d-flex align-items-center">
-        <p>Your Rating :</p>
+        <p>Đánh giá của bạn :</p>
         <div className="tp-product-details-review-form-rating-icon d-flex align-items-center">
           <Rating onClick={handleRating} allowFraction size={16} initialValue={rating} />
         </div>
@@ -65,50 +65,50 @@ const ReviewForm = ({product_id}) => {
         <div className="tp-product-details-review-input-box">
           <div className="tp-product-details-review-input">
             <textarea
-            {...register("comment", { required: `Comment is required!` })}
+            {...register("comment", { required: `Vui lòng nhập bình luận!` })}
               id="comment"
               name="comment"
-              placeholder="Write your review here..."
+              placeholder="Viết đánh giá của bạn tại đây..."
             />
           </div>
           <div className="tp-product-details-review-input-title">
-            <label htmlFor="msg">Your Review</label>
+            <label htmlFor="msg">Đánh giá của bạn</label>
           </div>
           <ErrorMsg msg={errors.name?.comment} />
         </div>
         <div className="tp-product-details-review-input-box">
           <div className="tp-product-details-review-input">
             <input
-            {...register("name", { required: `Name is required!` })}
+            {...register("name", { required: `Vui lòng nhập tên!` })}
               name="name"
               id="name"
               type="text"
-              placeholder="Shahnewaz Sakil"
+              placeholder="Họ và tên"
             />
           </div>
           <div className="tp-product-details-review-input-title">
-            <label htmlFor="name">Your Name</label>
+            <label htmlFor="name">Tên của bạn</label>
           </div>
           <ErrorMsg msg={errors.name?.name} />
         </div>
         <div className="tp-product-details-review-input-box">
           <div className="tp-product-details-review-input">
             <input
-            {...register("email", { required: `Name is required!` })}
+            {...register("email", { required: `Vui lòng nhập email!` })}
               name="email"
               id="email"
               type="email"
-              placeholder="shofy@mail.com"
+              placeholder="email@example.com"
             />
           </div>
           <div className="tp-product-details-review-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Email của bạn</label>
           </div>
           <ErrorMsg msg={errors.name?.email} />
         </div>
       </div>
       <div className="tp-product-details-review-btn-wrapper">
-        <button type="submit" className="tp-product-details-review-btn">Submit</button>
+        <button type="submit" className="tp-product-details-review-btn">Gửi</button>
       </div>
     </form>
   );

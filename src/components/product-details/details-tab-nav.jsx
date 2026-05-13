@@ -45,9 +45,9 @@ const DetailsTabNav = ({ product }) => {
       <div className="tp-product-details-tab-nav tp-tab">
         <nav>
           <div className="nav nav-tabs justify-content-center p-relative tp-product-tab" id="navPresentationTab" role="tablist">
-            <NavItem active={true} linkRef={activeRef} id="desc" title="Description" />
-            <NavItem id="additional" title="Additional information" />
-            <NavItem id="review" title={`Reviews (${reviews.length})`} />
+            <NavItem active={true} linkRef={activeRef} id="desc" title="Mô tả" />
+            <NavItem id="additional" title="Thông tin bổ sung" />
+            <NavItem id="review" title={`Đánh giá (${reviews.length})`} />
 
             <span ref={marker} id="productTabMarker" className="tp-product-details-tab-line"></span>
           </div>
@@ -61,8 +61,7 @@ const DetailsTabNav = ({ product }) => {
                   <div className="tp-product-details-desc-item">
                     <div className="row align-items-center">
                       <div className="col-lg-12">
-                        <div className="tp-product-details-desc-content">
-                          <p>{description}</p>
+                        <div className="tp-product-details-desc-content" dangerouslySetInnerHTML={{ __html: description }}>
                         </div>
                       </div>
                     </div>
@@ -100,9 +99,9 @@ const DetailsTabNav = ({ product }) => {
 
                     {/* reviews */}
                     <div className="tp-product-details-review-list pr-110">
-                      <h3 className="tp-product-details-review-title">Rating & Review</h3>
+                      <h3 className="tp-product-details-review-title">Xếp hạng & Đánh giá</h3>
                       {reviews.length === 0 && <h3 className="tp-product-details-review-title">
-                        There are no reviews yet.
+                        Chưa có đánh giá nào.
                       </h3>
                       }
                       {reviews.length > 0 && reviews.map(item => (
@@ -113,8 +112,8 @@ const DetailsTabNav = ({ product }) => {
                 </div>
                 <div className="col-lg-6">
                   <div className="tp-product-details-review-form">
-                    <h3 className="tp-product-details-review-form-title">Review this product</h3>
-                    <p>Your email address will not be published. Required fields are marked *</p>
+                    <h3 className="tp-product-details-review-form-title">Đánh giá sản phẩm này</h3>
+                    <p>Email của bạn sẽ không được hiển thị công khai. Các trường bắt buộc được đánh dấu *</p>
                     {/* form start */}
                     <ReviewForm product_id={_id} />
                     {/* form end */}

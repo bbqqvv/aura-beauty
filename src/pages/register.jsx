@@ -9,9 +9,9 @@ import RegisterArea from '@/components/login-register/register-area';
 const RegisterPage = () => {
   return (
     <Wrapper>
-      <SEO pageTitle="Login" />
+      <SEO pageTitle="Đăng ký" />
       <HeaderTwo style_2={true} />
-      <CommonBreadcrumb title="Register" subtitle="Register" center={true} />
+      <CommonBreadcrumb title="Đăng ký" subtitle="Đăng ký" center={true} />
       <RegisterArea />
       <Footer primary_style={true} />
     </Wrapper>

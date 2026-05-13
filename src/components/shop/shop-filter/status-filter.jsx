@@ -6,7 +6,7 @@ import { handleFilterSidebarClose } from "@/redux/features/shop-filter-slice";
 const StatusFilter = ({setCurrPage,shop_right=false}) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const status = ["On sale", "In Stock"];
+  const status = ["Giảm giá", "Còn hàng"];
 
   // handle status route 
   const handleStatusRoute = (status) => {
@@ -22,7 +22,7 @@ const StatusFilter = ({setCurrPage,shop_right=false}) => {
   }
   return (
     <div className="tp-shop-widget mb-50">
-      <h3 className="tp-shop-widget-title">Product Status</h3>
+      <h3 className="tp-shop-widget-title">Trạng thái sản phẩm</h3>
       <div className="tp-shop-widget-content">
         <div className="tp-shop-widget-checkbox">
           <ul className="filter-items filter-checkbox">

@@ -36,9 +36,9 @@ const RegisterForm = () => {
       password: data.password,
     }).then((result) => {
       if (result?.error) {
-        notifyError("Register Failed");
+        notifyError("Đăng ký thất bại");
       } else {
-        notifySuccess(result?.data?.message);
+        notifySuccess(result?.data?.message || "Đăng ký thành công");
         // router.push(redirect || "/");
       }
     });
@@ -50,30 +50,30 @@ const RegisterForm = () => {
         <div className="tp-login-input-box">
           <div className="tp-login-input">
             <input
-              {...register("name", { required: `Name is required!` })}
+              {...register("name", { required: `Vui lòng nhập Họ tên!` })}
               id="name"
               name="name"
               type="text"
-              placeholder="Shahnewaz Sakil"
+              placeholder="Họ và tên"
             />
           </div>
           <div className="tp-login-input-title">
-            <label htmlFor="name">Your Name</label>
+            <label htmlFor="name">Họ và tên</label>
           </div>
           <ErrorMsg msg={errors.name?.message} />
         </div>
         <div className="tp-login-input-box">
           <div className="tp-login-input">
             <input
-              {...register("email", { required: `Email is required!` })}
+              {...register("email", { required: `Vui lòng nhập Email!` })}
               id="email"
               name="email"
               type="email"
-              placeholder="shofy@mail.com"
+              placeholder="email@example.com"
             />
           </div>
           <div className="tp-login-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Địa chỉ Email</label>
           </div>
           <ErrorMsg msg={errors.email?.message} />
         </div>
@@ -81,11 +81,11 @@ const RegisterForm = () => {
           <div className="p-relative">
             <div className="tp-login-input">
               <input
-                {...register("password", { required: `Password is required!` })}
+                {...register("password", { required: `Vui lòng nhập mật khẩu!` })}
                 id="password"
                 name="password"
                 type={showPass ? "text" : "password"}
-                placeholder="Min. 6 character"
+                placeholder="Tối thiểu 6 ký tự"
               />
             </div>
             <div className="tp-login-input-eye" id="password-show-toggle">
@@ -94,7 +94,7 @@ const RegisterForm = () => {
               </span>
             </div>
             <div className="tp-login-input-title">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mật khẩu</label>
             </div>
           </div>
           <ErrorMsg msg={errors.password?.message} />
@@ -104,21 +104,21 @@ const RegisterForm = () => {
         <div className="tp-login-remeber">
           <input
             {...register("remember", {
-              required: `Terms and Conditions is required!`,
+              required: `Bạn phải đồng ý với điều khoản!`,
             })}
             id="remember"
             name="remember"
             type="checkbox"
           />
           <label htmlFor="remember">
-            I accept the terms of the Service & <a href="#">Privacy Policy</a>.
+            Tôi chấp nhận các điều khoản Dịch vụ & <a href="#">Chính sách Bảo mật</a>.
           </label>
           <ErrorMsg msg={errors.remember?.message} />
         </div>
       </div>
       <div className="tp-login-bottom">
         <button type="submit" className="tp-login-btn w-100">
-          Sign Up
+          Đăng ký
         </button>
       </div>
     </form>

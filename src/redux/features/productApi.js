@@ -4,28 +4,28 @@ export const productApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getAllProducts: builder.query({
-      query: () => `https://shofy-backend.vercel.app/api/product/all`,
+      query: () => `/api/product/all`,
       providesTags:['Products']
     }),
     getProductType: builder.query({
-      query: ({ type, query }) => `https://shofy-backend.vercel.app/api/product/${type}?${query}`,
+      query: ({ type, query }) => `/api/product/${type}?${query}`,
       providesTags:['ProductType']
     }),
     getOfferProducts: builder.query({
-      query: (type) => `https://shofy-backend.vercel.app/api/product/offer?type=${type}`,
+      query: (type) => `/api/product/offer?type=${type}`,
       providesTags:['OfferProducts']
     }),
     getPopularProductByType: builder.query({
-      query: (type) => `https://shofy-backend.vercel.app/api/product/popular/${type}`,
+      query: (type) => `/api/product/popular/${type}`,
       providesTags:['PopularProducts']
     }),
     getTopRatedProducts: builder.query({
-      query: () => `https://shofy-backend.vercel.app/api/product/top-rated`,
+      query: () => `/api/product/top-rated`,
       providesTags:['TopRatedProducts']
     }),
     // get single product
     getProduct: builder.query({
-      query: (id) => `https://shofy-backend.vercel.app/api/product/single-product/${id}`,
+      query: (id) => `/api/product/single-product/${id}`,
       providesTags: (result, error, arg) => [{ type: "Product", id: arg }],
       invalidatesTags: (result, error, arg) => [
         { type: "RelatedProducts", id:arg },
@@ -33,10 +33,36 @@ export const productApi = apiSlice.injectEndpoints({
     }),
     // get related products
     getRelatedProducts: builder.query({
-      query: (id) => `https://shofy-backend.vercel.app/api/product/related-product/${id}`,
+      query: (id) => `/api/product/related-product/${id}`,
       providesTags: (result, error, arg) => [
         { type: "RelatedProducts", id: arg },
       ],
+    }),
+    // delete product
+    deleteProduct: builder.mutation({
+      query: (id) => ({
+        url: `/api/product/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Products', 'ProductType', 'TopRatedProducts', 'OfferProducts'],
+    }),
+    // add product
+    addProduct: builder.mutation({
+      query: (data) => ({
+        url: `/api/product/add`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Products', 'ProductType'],
+    }),
+    // update product
+    updateProduct: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/api/product/edit-product/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['Products', 'ProductType', 'Product', 'RelatedProducts'],
     }),
   }),
 });
@@ -49,4 +75,7 @@ export const {
   useGetTopRatedProductsQuery,
   useGetProductQuery,
   useGetRelatedProductsQuery,
+  useDeleteProductMutation,
+  useAddProductMutation,
+  useUpdateProductMutation,
 } = productApi;

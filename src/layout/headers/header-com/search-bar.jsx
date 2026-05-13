@@ -34,21 +34,21 @@ const SearchBar = ({ isSearchOpen, setIsSearchOpen }) => {
                       onChange={(e) => setSearchText(e.target.value)}
                       value={searchText}
                       type="text"
-                      placeholder="Search for product..."
+                      placeholder="Tìm kiếm sản phẩm..."
                     />
                     <button type="submit">
                       <i className="flaticon-search-1"></i>
                     </button>
                   </div>
                   <div className="tp-search-category">
-                    <span>Search by : </span>
+                    <span>Tìm kiếm theo: </span>
                     {categories.map((c, i) => (
                       <a
                         key={i}
                         onClick={() => handleCategory(c)}
                         className="cursor-pointer"
                       >
-                        {c}
+                        {c === "electronics" ? "điện tử" : c === "fashion" ? "thời trang" : c === "beauty" ? "sắc đẹp" : c === "jewelry" ? "trang sức" : c}
                         {i < categories.length - 1 && ", "}
                       </a>
                     ))}

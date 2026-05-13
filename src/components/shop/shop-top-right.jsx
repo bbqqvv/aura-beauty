@@ -12,15 +12,15 @@ const ShopTopRight = ({selectHandleFilter}) => {
       <div className="tp-shop-top-select">
         <NiceSelect
           options={[
-            { value: "Default Sorting", text: "Default Sorting" },
-            { value: "Low to High", text: "Low to High" },
-            { value: "High to Low", text: "High to Low" },
-            { value: "New Added", text: "New Added" },
-            { value: "On Sale", text: "On Sale" },
+            { value: "Default Sorting", text: "Sắp xếp mặc định" },
+            { value: "Low to High", text: "Giá thấp đến cao" },
+            { value: "High to Low", text: "Giá cao đến thấp" },
+            { value: "New Added", text: "Mới nhất" },
+            { value: "On Sale", text: "Đang giảm giá" },
           ]}
           defaultCurrent={0}
           onChange={selectHandleFilter}
-          name="Default Sorting"
+          name="Sắp xếp mặc định"
         />
       </div>
       <div className="tp-shop-top-filter">
@@ -28,7 +28,7 @@ const ShopTopRight = ({selectHandleFilter}) => {
           <span>
             <Filter />
           </span>
-          {" "}Filter
+          {" "}Lọc
         </button>
       </div>
     </div>

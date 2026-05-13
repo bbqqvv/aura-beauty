@@ -29,7 +29,7 @@ const handleCloseCartMini = () => {
           <div className="cartmini__top-wrapper">
             <div className="cartmini__top p-relative">
               <div className="cartmini__top-title">
-                <h4>Shopping cart</h4>
+                <h4>Giỏ hàng</h4>
               </div>
               <div className="cartmini__close">
                 <button onClick={() => dispatch(closeCartMini())} type="button" className="cartmini__close-btn cartmini-close-btn">
@@ -64,18 +64,18 @@ const handleCloseCartMini = () => {
             {/* if no item in cart */}
             {cart_products.length === 0 && <div className="cartmini__empty text-center">
               <Image src={empty_cart_img} alt="empty-cart-img" />
-              <p>Your Cart is empty</p>
-              <Link href="/shop" className="tp-btn">Go to Shop</Link>
+              <p>Giỏ hàng của bạn đang trống</p>
+              <Link href="/shop" className="tp-btn">Đi tới cửa hàng</Link>
             </div>}
           </div>
           <div className="cartmini__checkout">
             <div className="cartmini__checkout-title mb-30">
-              <h4>Subtotal:</h4>
+              <h4>Tổng tiền:</h4>
               <span>${total.toFixed(2)}</span>
             </div>
             <div className="cartmini__checkout-btn">
-              <Link href="/cart" onClick={handleCloseCartMini} className="tp-btn mb-10 w-100"> view cart</Link>
-              <Link href="/checkout" onClick={handleCloseCartMini} className="tp-btn tp-btn-border w-100"> checkout</Link>
+              <Link href="/cart" onClick={handleCloseCartMini} className="tp-btn mb-10 w-100"> Xem giỏ hàng</Link>
+              <Link href="/checkout" onClick={handleCloseCartMini} className="tp-btn tp-btn-border w-100"> Thanh toán</Link>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import ReactModal from "react-modal";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import '../styles/index.scss';
+import '../styles/admin.css';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 if (typeof window !== "undefined") {
   require("bootstrap/dist/js/bootstrap");

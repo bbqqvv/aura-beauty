@@ -23,14 +23,14 @@ const CheckoutOrderArea = ({ checkoutData }) => {
   const { total } = useCartInfo();
   return (
     <div className="tp-checkout-place white-bg">
-      <h3 className="tp-checkout-place-title">Your Order</h3>
+      <h3 className="tp-checkout-place-title">Đơn hàng của bạn</h3>
 
       <div className="tp-order-info-list">
         <ul>
           {/*  header */}
           <li className="tp-order-info-list-header">
-            <h4>Product</h4>
-            <h4>Total</h4>
+            <h4>Sản phẩm</h4>
+            <h4>Tổng cộng</h4>
           </li>
 
           {/*  item list */}
@@ -45,12 +45,12 @@ const CheckoutOrderArea = ({ checkoutData }) => {
 
           {/*  shipping */}
           <li className="tp-order-info-list-shipping">
-            <span>Shipping</span>
+            <span>Vận chuyển</span>
             <div className="tp-order-info-list-shipping-item d-flex flex-column align-items-end">
               <span>
                 <input
                   {...register(`shippingOption`, {
-                    required: `Shipping Option is required!`,
+                    required: `Vui lòng chọn phương thức vận chuyển!`,
                   })}
                   id="flat_shipping"
                   type="radio"
@@ -60,14 +60,14 @@ const CheckoutOrderArea = ({ checkoutData }) => {
                   onClick={() => handleShippingCost(60)}
                   htmlFor="flat_shipping"
                 >
-                  Delivery: Today Cost :<span>$60.00</span>
+                  Giao hàng: Trong ngày Phí :<span>$60.00</span>
                 </label>
                 <ErrorMsg msg={errors?.shippingOption?.message} />
               </span>
               <span>
                 <input
                   {...register(`shippingOption`, {
-                    required: `Shipping Option is required!`,
+                    required: `Vui lòng chọn phương thức vận chuyển!`,
                   })}
                   id="flat_rate"
                   type="radio"
@@ -77,7 +77,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
                   onClick={() => handleShippingCost(20)}
                   htmlFor="flat_rate"
                 >
-                  Delivery: 7 Days Cost: <span>$20.00</span>
+                  Giao hàng: 7 Ngày Phí: <span>$20.00</span>
                 </label>
                 <ErrorMsg msg={errors?.shippingOption?.message} />
               </span>
@@ -86,25 +86,25 @@ const CheckoutOrderArea = ({ checkoutData }) => {
 
            {/*  subtotal */}
            <li className="tp-order-info-list-subtotal">
-            <span>Subtotal</span>
+            <span>Tạm tính</span>
             <span>${total.toFixed(2)}</span>
           </li>
 
            {/*  shipping cost */}
            <li className="tp-order-info-list-subtotal">
-            <span>Shipping Cost</span>
+            <span>Phí vận chuyển</span>
             <span>${shippingCost.toFixed(2)}</span>
           </li>
 
            {/* discount */}
            <li className="tp-order-info-list-subtotal">
-            <span>Discount</span>
+            <span>Giảm giá</span>
             <span>${discountAmount.toFixed(2)}</span>
           </li>
 
           {/* total */}
           <li className="tp-order-info-list-total">
-            <span>Total</span>
+            <span>Tổng cộng</span>
             <span>${parseFloat(cartTotal).toFixed(2)}</span>
           </li>
         </ul>
@@ -113,7 +113,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
         <div className="tp-checkout-payment-item">
           <input
             {...register(`payment`, {
-              required: `Payment Option is required!`,
+              required: `Vui lòng chọn phương thức thanh toán!`,
             })}
             type="radio"
             id="back_transfer"
@@ -121,7 +121,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             value="Card"
           />
           <label onClick={() => setShowCard(true)} htmlFor="back_transfer" data-bs-toggle="direct-bank-transfer">
-            Credit Card
+            Thẻ tín dụng
           </label>
           {showCard && (
             <div className="direct-bank-transfer">
@@ -150,7 +150,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
         <div className="tp-checkout-payment-item">
           <input
             {...register(`payment`, {
-              required: `Payment Option is required!`,
+              required: `Vui lòng chọn phương thức thanh toán!`,
             })}
             onClick={() => setShowCard(false)}
             type="radio"
@@ -158,7 +158,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             name="payment"
             value="COD"
           />
-          <label htmlFor="cod">Cash on Delivery</label>
+          <label htmlFor="cod">Thanh toán khi nhận hàng (COD)</label>
           <ErrorMsg msg={errors?.payment?.message} />
         </div>
       </div>
@@ -169,7 +169,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
           disabled={!stripe || isCheckoutSubmit}
           className="tp-checkout-btn w-100"
         >
-          Place Order
+          Đặt hàng
         </button>
       </div>
     </div>

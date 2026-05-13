@@ -6,7 +6,7 @@ const PriceFilter = ({ priceFilterValues,maxPrice }) => {
   return (
     <>
       <div className="tp-shop-widget mb-35">
-        <h3 className="tp-shop-widget-title no-border">Price Filter</h3>
+        <h3 className="tp-shop-widget-title no-border">Lọc theo giá</h3>
 
         <div className="tp-shop-widget-content">
           <div className="tp-shop-widget-filter">
@@ -24,7 +24,7 @@ const PriceFilter = ({ priceFilterValues,maxPrice }) => {
                 ${priceValue[0]} - ${priceValue[1]}
               </span>
               <button className="tp-shop-widget-filter-btn" type="button">
-                Filter
+                Lọc
               </button>
             </div>
           </div>

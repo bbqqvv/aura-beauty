@@ -29,20 +29,20 @@ const slider_data = [
   {
     id: 1,
     bg: slider_bg_1,
-    subtitle: "Winter Collection 2023",
-    title: "Be your kind of beauty",
+    subtitle: "Bộ sưu tập Mùa đông 2023",
+    title: "Vẻ đẹp theo cách của bạn",
   },
   {
     id: 2,
     bg: slider_bg_2,
-    subtitle: "Top Brand Collection",
-    title: "Use the best for you.",
+    subtitle: "Bộ sưu tập Thương hiệu hàng đầu",
+    title: "Sử dụng những điều tốt nhất cho bạn.",
   },
   {
     id: 3,
     bg: slider_bg_3,
-    subtitle: "Awesome Beauty Products",
-    title: "Don't Worry for Skincare",
+    subtitle: "Sản phẩm làm đẹp tuyệt vời",
+    title: "Chăm sóc làn da hoàn hảo",
   },
 ];
 
@@ -86,21 +86,21 @@ const BeautyBanner = () => {
                 <div className="row align-items-center">
                   <div className="col-xl-6 col-lg-6 col-md-8">
                     <div className="tp-slider-content-3">
-                      <span>Winter Collection 2023</span>
+                      <span>Bộ sưu tập Mùa đông 2023</span>
                       <h3 className="tp-slider-title-3">
-                        Be your kind of beauty
+                        Vẻ đẹp theo cách của bạn
                       </h3>
                       <div className="tp-slider-feature-3 d-flex flex-wrap align-items-center p-relative z-index-1 mb-15">
-                        <FeatureItem icon={<Cosmetics />} title={<>High-end <br /> Cosmetics</>} />
-                        <FeatureItem icon={<VeganProduct />} title={<>Vegan <br /> Product</>} />
-                        <FeatureItem icon={<Meckoup />} title={<>Express <br /> Make-up</>} />
+                        <FeatureItem icon={<Cosmetics />} title={<>Mỹ phẩm <br /> Cao cấp</>} />
+                        <FeatureItem icon={<VeganProduct />} title={<>Sản phẩm <br /> Thuần chay</>} />
+                        <FeatureItem icon={<Meckoup />} title={<>Trang điểm <br /> Nhanh chóng</>} />
                       </div>
                       <div className="tp-slider-btn-3">
                         <Link
                           href="/shop"
                           className="tp-btn tp-btn-border tp-btn-border-white"
                         >
-                          Discover Now
+                          Khám phá ngay
                         </Link>
                       </div>
                     </div>

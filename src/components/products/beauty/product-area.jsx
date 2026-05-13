@@ -19,10 +19,10 @@ const ProductArea = () => {
     );
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã có lỗi xảy ra" />;
   }
   if (!isLoading && !isError && products?.data?.length === 0) {
-    content = <ErrorMsg msg="No Products found!" />;
+    content = <ErrorMsg msg="Không tìm thấy sản phẩm nào!" />;
   }
   if (!isLoading && !isError && products?.data?.length > 0) {
     const product_items = products.data.slice(0, 8);
@@ -39,14 +39,14 @@ const ProductArea = () => {
           <div className="row align-items-end">
             <div className="col-lg-6 col-md-8">
               <div className="tp-section-title-wrapper-3 mb-55">
-                <span className="tp-section-title-pre-3">Shop by Category</span>
-                <h3 className="tp-section-title-3">Best sellers in beauty</h3>
+                <span className="tp-section-title-pre-3">Mua sắm theo danh mục</span>
+                <h3 className="tp-section-title-3">Sản phẩm bán chạy</h3>
               </div>
             </div>
             <div className="col-lg-6 col-md-4">
               <div className="tp-product-more-3 text-md-end mb-65">
                 <Link href="/shop" className="tp-btn">
-                  Shop All Products
+                  Xem tất cả sản phẩm
                   {" "}<ArrowRightSmTwo />
                 </Link>
               </div>

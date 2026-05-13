@@ -30,9 +30,9 @@ const ProductBrand = ({setCurrPage,shop_right=false}) => {
   if (isLoading) {
     content = <ShopBrandLoader loading={isLoading}/>;
   } else if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã có lỗi xảy ra" />;
   } else if (!isLoading && !isError && brands?.result?.length === 0) {
-    content = <ErrorMsg msg="No Brands found!" />;
+    content = <ErrorMsg msg="Không tìm thấy thương hiệu nào!" />;
   } else if (!isLoading && !isError && brands?.result?.length > 0) {
     const all_brands = brands.result;
     const sortedBrands = all_brands.slice().sort((a, b) => b.products.length - a.products.length);
@@ -52,7 +52,7 @@ const ProductBrand = ({setCurrPage,shop_right=false}) => {
   return (
     <>
       <div className="tp-shop-widget mb-50">
-        <h3 className="tp-shop-widget-title">Popular Brands</h3>
+        <h3 className="tp-shop-widget-title">Thương hiệu phổ biến</h3>
         <div className="tp-shop-widget-content ">
           <div className="tp-shop-widget-brand-list d-flex align-items-center justify-content-between flex-wrap">
             {content}

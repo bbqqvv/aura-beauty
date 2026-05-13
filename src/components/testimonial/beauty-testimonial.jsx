@@ -41,8 +41,8 @@ const BeautyTestimonial = () => {
           <div className="row">
             <div className="col-xl-12">
               <div className="tp-section-title-wrapper-3 mb-45 text-center">
-                <span className="tp-section-title-pre-3">Customers Review</span>
-                <h3 className="tp-section-title-3">What our Clients say</h3>
+                <span className="tp-section-title-pre-3">Đánh giá khách hàng</span>
+                <h3 className="tp-section-title-3">Khách hàng nói gì về chúng tôi</h3>
               </div>
             </div>
           </div>

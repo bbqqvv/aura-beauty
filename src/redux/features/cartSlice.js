@@ -20,7 +20,7 @@ export const cartSlice = createSlice({
           orderQuantity: state.orderQuantity,
         };
         state.cart_products.push(newItem);
-        notifySuccess(`${state.orderQuantity} ${payload.title} added to cart`);
+        notifySuccess(`${state.orderQuantity} ${payload.title} đã được thêm vào giỏ hàng`);
       } else {
         state.cart_products.map((item) => {
           if (item._id === payload._id) {
@@ -29,9 +29,9 @@ export const cartSlice = createSlice({
                 state.orderQuantity !== 1
                   ? state.orderQuantity + item.orderQuantity
                   : item.orderQuantity + 1;
-              notifySuccess(`${state.orderQuantity} ${item.title} added to cart`);
+              notifySuccess(`${state.orderQuantity} ${item.title} đã được thêm vào giỏ hàng`);
             } else {
-              notifyError("No more quantity available for this product!");
+              notifyError("Không còn đủ số lượng cho sản phẩm này!");
               state.orderQuantity = 1;
             }
           }
@@ -65,7 +65,7 @@ export const cartSlice = createSlice({
         (item) => item._id !== payload.id
       );
       setLocalStorage("cart_products", state.cart_products);
-      notifyError(`${payload.title} Remove from cart`);
+      notifyError(`${payload.title} đã được xóa khỏi giỏ hàng`);
     },
     get_cart_products: (state, action) => {
       state.cart_products = getLocalStorage("cart_products");
@@ -74,7 +74,7 @@ export const cartSlice = createSlice({
       state.orderQuantity = 1;
     },
     clearCart:(state) => {
-      const isClearCart = window.confirm('Are you sure you want to remove all items ?');
+      const isClearCart = window.confirm('Bạn có chắc chắn muốn xóa tất cả sản phẩm khỏi giỏ hàng không?');
       if(isClearCart){
         state.cart_products = []
       }

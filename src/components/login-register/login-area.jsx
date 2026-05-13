@@ -16,11 +16,11 @@ const LoginArea = () => {
             <div className="col-xl-6 col-lg-8">
               <div className="tp-login-wrapper">
                 <div className="tp-login-top text-center mb-30">
-                  <h3 className="tp-login-title">Login to Shofy.</h3>
+                  <h3 className="tp-login-title">Đăng nhập vào Aura.</h3>
                   <p>
-                    Don’t have an account?{" "}
+                    Chưa có tài khoản?{" "}
                     <span>
-                      <Link href="/register">Create a free account</Link>
+                      <Link href="/register">Tạo tài khoản miễn phí</Link>
                     </span>
                   </p>
                 </div>
@@ -32,7 +32,7 @@ const LoginArea = () => {
                   </div>
                   <div className="tp-login-mail text-center mb-40">
                     <p>
-                      or Sign in with <a href="#">Email</a>
+                      hoặc Đăng nhập bằng <a href="#">Email</a>
                     </p>
                   </div>
                   <LoginForm />

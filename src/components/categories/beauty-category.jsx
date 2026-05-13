@@ -31,10 +31,10 @@ const BeautyCategory = () => {
     content = <HomeThreeCategoryLoader loading={isLoading}/>;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã có lỗi xảy ra" />;
   }
   if (!isLoading && !isError && categories?.result?.length === 0) {
-    content = <ErrorMsg msg="No Category found!" />;
+    content = <ErrorMsg msg="Không tìm thấy danh mục nào!" />;
   }
   if (!isLoading && !isError && categories?.result?.length > 0) {
     const category_items = categories.result;
@@ -55,14 +55,14 @@ const BeautyCategory = () => {
               </a>
             </h3>
             <span className="tp-categroy-ammount-3">
-              {item.products.length} Products
+              {item.products.length} Sản phẩm
             </span>
             <div className="tp-category-btn-3">
               <a
                 onClick={() => handleCategoryRoute(item.parent)}
                 className="cursor-pointer tp-link-btn tp-link-btn-2"
               >
-                View Now
+                Xem ngay
                 <ArrowRightSm />
               </a>
             </div>
@@ -79,15 +79,15 @@ const BeautyCategory = () => {
             <div className="col-lg-6 col-md-8">
               <div className="tp-section-title-wrapper-3 mb-45">
                 <span className="tp-section-title-pre-3">
-                  Product Collection
+                  Bộ sưu tập sản phẩm
                 </span>
-                <h3 className="tp-section-title-3">Discover our products</h3>
+                <h3 className="tp-section-title-3">Khám phá sản phẩm của chúng tôi</h3>
               </div>
             </div>
             <div className="col-lg-6 col-md-4">
               <div className="tp-category-more-3 text-md-end mb-55">
                 <Link href="/shop" className="tp-btn">
-                  Shop All Products <ArrowRightSmTwo />
+                  Xem tất cả sản phẩm <ArrowRightSmTwo />
                 </Link>
               </div>
             </div>

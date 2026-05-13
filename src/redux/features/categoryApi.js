@@ -5,16 +5,34 @@ export const categoryApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     addCategory: builder.mutation({
       query: (data) => ({
-        url: "https://shofy-backend.vercel.app/api/category/add",
+        url: "/api/category/add",
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ['Categories'],
     }),
     getShowCategory: builder.query({
-      query: () => `https://shofy-backend.vercel.app/api/category/show`
+      query: () => `/api/category/show`,
+      providesTags: ['Categories'],
     }),
     getProductTypeCategory: builder.query({
-      query: (type) => `https://shofy-backend.vercel.app/api/category/show/${type}`
+      query: (type) => `/api/category/show/${type}`,
+      providesTags: ['Categories'],
+    }),
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/api/category/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ['Categories'],
+    }),
+    updateCategory: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/api/category/edit/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ['Categories'],
     }),
   }),
 });
@@ -23,4 +41,6 @@ export const {
  useAddCategoryMutation,
  useGetProductTypeCategoryQuery,
  useGetShowCategoryQuery,
+ useDeleteCategoryMutation,
+ useUpdateCategoryMutation,
 } = categoryApi;

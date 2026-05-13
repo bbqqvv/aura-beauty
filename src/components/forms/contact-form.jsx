@@ -28,7 +28,7 @@ const ContactForm = () => {
     // on submit
     const onSubmit = (data) => {
       if(data){
-        notifySuccess('Message sent successfully!');
+        notifySuccess('Tin nhắn đã được gửi thành công!');
       }
 
       reset();
@@ -39,50 +39,50 @@ const ContactForm = () => {
       <div className="tp-contact-input-wrapper">
         <div className="tp-contact-input-box">
           <div className="tp-contact-input">
-            <input {...register("name", { required: `Name is required!` })} name="name" id="name" type="text" placeholder="Shahnewaz Sakil" />
+            <input {...register("name", { required: `Vui lòng nhập Họ tên!` })} name="name" id="name" type="text" placeholder="Họ và tên" />
           </div>
           <div className="tp-contact-input-title">
-            <label htmlFor="name">Your Name</label>
+            <label htmlFor="name">Họ và tên</label>
           </div>
           <ErrorMsg msg={errors.name?.message} />
         </div>
         <div className="tp-contact-input-box">
           <div className="tp-contact-input">
-            <input {...register("email", { required: `Email is required!` })} name="email" id="email" type="email" placeholder="shofy@mail.com" />
+            <input {...register("email", { required: `Vui lòng nhập Email!` })} name="email" id="email" type="email" placeholder="email@example.com" />
           </div>
           <div className="tp-contact-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Địa chỉ Email</label>
           </div>
           <ErrorMsg msg={errors.email?.message} />
         </div>
         <div className="tp-contact-input-box">
           <div className="tp-contact-input">
-            <input {...register("subject", { required: `Subject is required!` })} name="subject" id="subject" type="text" placeholder="Write your subject" />
+            <input {...register("subject", { required: `Vui lòng nhập Chủ đề!` })} name="subject" id="subject" type="text" placeholder="Chủ đề của bạn" />
           </div>
           <div className="tp-contact-input-title">
-            <label htmlFor="subject">Subject</label>
+            <label htmlFor="subject">Chủ đề</label>
           </div>
           <ErrorMsg msg={errors.subject?.message} />
         </div>
         <div className="tp-contact-input-box">
           <div className="tp-contact-input">
-            <textarea {...register("message", { required: `Message is required!` })} id="message" name="message" placeholder="Write your message here..."/>
+            <textarea {...register("message", { required: `Vui lòng nhập Tin nhắn!` })} id="message" name="message" placeholder="Nhập tin nhắn của bạn tại đây..."/>
           </div>
           <div className="tp-contact-input-title">
-            <label htmlFor="message">Your Message</label>
+            <label htmlFor="message">Tin nhắn của bạn</label>
           </div>
           <ErrorMsg msg={errors.message?.message} />
         </div>
       </div>
       <div className="tp-contact-suggetions mb-20">
         <div className="tp-contact-remeber">
-          <input  {...register("remember", {required: `Terms and Conditions is required!`})} name="remember" id="remember" type="checkbox" />
-          <label htmlFor="remember">Save my name, email, and website in this browser for the next time I comment.</label>
+          <input  {...register("remember", {required: `Vui lòng đồng ý với điều khoản!`})} name="remember" id="remember" type="checkbox" />
+          <label htmlFor="remember">Lưu tên, email và trang web của tôi trong trình duyệt này cho lần gửi tiếp theo.</label>
           <ErrorMsg msg={errors.remember?.message} />
         </div>
       </div>
       <div className="tp-contact-btn">
-        <button type="submit">Send Message</button>
+        <button type="submit">Gửi tin nhắn</button>
       </div>
     </form>
   );

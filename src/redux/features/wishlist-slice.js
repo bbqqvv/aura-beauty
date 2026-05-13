@@ -14,20 +14,19 @@ export const wishlistSlice = createSlice({
       const isExist = state.wishlist.some((item) => item._id === payload._id);
       if (!isExist) {
         state.wishlist.push(payload);
-        notifySuccess(`${payload.title} added to wishlist`);
+        notifySuccess(`${payload.title} đã được thêm vào danh sách yêu thích`);
       } else {
         state.wishlist = state.wishlist.filter(
           (item) => item._id !== payload._id
         );
-        notifyError(`${payload.title} removed from wishlist`);
+        notifyError(`${payload.title} đã được xóa khỏi danh sách yêu thích`);
       }
       setLocalStorage("wishlist_items", state.wishlist);
     },
     remove_wishlist_product: (state, { payload }) => {
       state.wishlist = state.wishlist.filter((item) => item._id !== payload.id);
-      notifyError(`${payload.title} removed from wishlist`);
+      notifyError(`${payload.title} đã được xóa khỏi danh sách yêu thích`);
       setLocalStorage("wishlist_items", state.wishlist);
-      notifyError(`${payload.title} removed from wishlist`);
     },
     get_wishlist_products: (state, { payload }) => {
       state.wishlist = getLocalStorage("wishlist_items");

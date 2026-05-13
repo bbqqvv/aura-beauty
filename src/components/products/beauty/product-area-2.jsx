@@ -5,7 +5,7 @@ import { useGetProductTypeQuery } from "@/redux/features/productApi";
 import { HomeThreePrdTwoLoader } from "@/components/loader";
 
 // tabs
-const tabs = ["All Collection", "Trending", "Beauty", "Cosmetics"];
+const tabs = ["Tất cả bộ sưu tập", "Xu hướng", "Làm đẹp", "Mỹ phẩm"];
 
 const ProductAreaTwo = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -44,24 +44,24 @@ const ProductAreaTwo = () => {
     content = <HomeThreePrdTwoLoader loading={isLoading} />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã có lỗi xảy ra" />;
   }
   if (!isLoading && !isError && products?.data?.length === 0) {
-    content = <ErrorMsg msg="No Products found!" />;
+    content = <ErrorMsg msg="Không tìm thấy sản phẩm nào!" />;
   }
   if (!isLoading && !isError && products?.data?.length > 0) {
     let product_items = products.data;
-    if (activeTab === "All Collection") {
+    if (activeTab === "Tất cả bộ sưu tập") {
       product_items = products.data;
-    } else if (activeTab === "Trending") {
+    } else if (activeTab === "Xu hướng") {
       product_items = products.data
         .slice()
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (activeTab === "Beauty") {
+    } else if (activeTab === "Làm đẹp") {
       product_items = products.data.filter(
         (p) => p.category.name === "Discover Skincare"
       );
-    } else if (activeTab === "Cosmetics") {
+    } else if (activeTab === "Mỹ phẩm") {
       product_items = products.data.filter(
         (p) => p.category.name === "Awesome Lip Care"
       );
@@ -74,9 +74,9 @@ const ProductAreaTwo = () => {
           <div className="col-xl-6 col-lg-6">
             <div className="tp-section-title-wrapper-3 mb-45 text-center text-lg-start">
               <span className="tp-section-title-pre-3">
-                Best Seller This Week’s
+                Sản phẩm bán chạy tuần này
               </span>
-              <h3 className="tp-section-title-3">Enjoy the best quality</h3>
+              <h3 className="tp-section-title-3">Tận hưởng chất lượng tốt nhất</h3>
             </div>
           </div>
           <div className="col-xl-6 col-lg-6">

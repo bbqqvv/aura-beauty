@@ -38,11 +38,11 @@ const LoginForm = () => {
     })
       .then((data) => {
         if (data?.data) {
-          notifySuccess("Login successfully");
+          notifySuccess("Đăng nhập thành công");
           router.push(redirect || "/");
         }
         else {
-          notifyError(data?.error?.data?.error)
+          notifyError(data?.error?.data?.error || "Đăng nhập thất bại")
         }
       })
     reset();
@@ -52,10 +52,10 @@ const LoginForm = () => {
       <div className="tp-login-input-wrapper">
         <div className="tp-login-input-box">
           <div className="tp-login-input">
-            <input {...register("email", { required: `Email is required!` })} name="email" id="email" type="email" placeholder="shofy@mail.com" />
+            <input {...register("email", { required: `Vui lòng nhập Email!` })} name="email" id="email" type="email" placeholder="email@example.com" />
           </div>
           <div className="tp-login-input-title">
-            <label htmlFor="email">Your Email</label>
+            <label htmlFor="email">Địa chỉ Email</label>
           </div>
           <ErrorMsg msg={errors.email?.message} />
         </div>
@@ -63,10 +63,10 @@ const LoginForm = () => {
           <div className="p-relative">
             <div className="tp-login-input">
               <input
-                {...register("password", { required: `Password is required!` })}
+                {...register("password", { required: `Vui lòng nhập mật khẩu!` })}
                 id="password"
                 type={showPass ? "text" : "password"}
-                placeholder="Min. 6 character"
+                placeholder="Tối thiểu 6 ký tự"
               />
             </div>
             <div className="tp-login-input-eye" id="password-show-toggle">
@@ -75,7 +75,7 @@ const LoginForm = () => {
               </span>
             </div>
             <div className="tp-login-input-title">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mật khẩu</label>
             </div>
           </div>
           <ErrorMsg msg={errors.password?.message}/>
@@ -84,14 +84,14 @@ const LoginForm = () => {
       <div className="tp-login-suggetions d-sm-flex align-items-center justify-content-between mb-20">
         <div className="tp-login-remeber">
           <input id="remeber" type="checkbox" />
-          <label htmlFor="remeber">Remember me</label>
+          <label htmlFor="remeber">Ghi nhớ tôi</label>
         </div>
         <div className="tp-login-forgot">
-          <Link href="/forgot">Forgot Password?</Link>
+          <Link href="/forgot">Quên mật khẩu?</Link>
         </div>
       </div>
       <div className="tp-login-bottom">
-        <button type='submit' className="tp-login-btn w-100">Login</button>
+        <button type='submit' className="tp-login-btn w-100">Đăng nhập</button>
       </div>
     </form>
   );

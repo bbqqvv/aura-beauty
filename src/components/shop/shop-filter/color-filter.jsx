@@ -31,10 +31,10 @@ const ColorFilter = ({setCurrPage,shop_right=false}) => {
     content = <ShopColorLoader loading={isLoading}/>;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã có lỗi xảy ra" />;
   }
   if (!isLoading && !isError && products?.data?.length === 0) {
-    content = <ErrorMsg msg="No Products found!" />;
+    content = <ErrorMsg msg="Không tìm thấy sản phẩm nào!" />;
   }
   if (!isLoading && !isError && products?.data?.length > 0) {
     const product_items = products.data;
@@ -91,7 +91,7 @@ const ColorFilter = ({setCurrPage,shop_right=false}) => {
   return (
     <>
       <div className="tp-shop-widget mb-50">
-        <h3 className="tp-shop-widget-title">Filter by Color</h3>
+        <h3 className="tp-shop-widget-title">Lọc theo màu sắc</h3>
         <div className="tp-shop-widget-content">
           <div className="tp-shop-widget-checkbox-circle-list">
             <ul>{content}</ul>

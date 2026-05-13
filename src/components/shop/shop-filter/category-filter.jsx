@@ -31,10 +31,10 @@ const CategoryFilter = ({setCurrPage,shop_right=false}) => {
     content = <ShopCategoryLoader loading={isLoading}/>;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã có lỗi xảy ra" />;
   }
   if (!isLoading && !isError && categories?.result?.length === 0) {
-    content = <ErrorMsg msg="No Category found!" />;
+    content = <ErrorMsg msg="Không tìm thấy danh mục nào!" />;
   }
   if (!isLoading && !isError && categories?.result?.length > 0) {
     const category_items = categories.result;
@@ -58,7 +58,7 @@ const CategoryFilter = ({setCurrPage,shop_right=false}) => {
   return (
     <>
       <div className="tp-shop-widget mb-50">
-        <h3 className="tp-shop-widget-title">Categories</h3>
+        <h3 className="tp-shop-widget-title">Danh mục</h3>
         <div className="tp-shop-widget-content">
           <div className="tp-shop-widget-categories">
             <ul>{content}</ul>

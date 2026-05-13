@@ -36,7 +36,7 @@ const Header = () => {
                     <span>
                       <ShippingCar />
                     </span>
-                    <p>FREE Express Shipping On Orders $570+</p>
+                    <p>Miễn phí giao hàng nhanh cho đơn hàng từ $570+</p>
                   </div>
                 </div>
                 <div className="col-md-6">
@@ -86,7 +86,7 @@ const Header = () => {
                         <span>
                           <CategoryMenu />
                         </span>
-                        All Departments
+                        Tất cả danh mục
                       </button>
                       <nav className="tp-category-menu-content">
                         <HeaderCategory categoryType="electronics" isCategoryActive={isCategoryActive} />

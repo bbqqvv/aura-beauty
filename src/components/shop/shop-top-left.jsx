@@ -40,7 +40,7 @@ const ShopTopLeft = ({total,showing=9}) => {
           </ul>
         </div>
         <div className="tp-shop-top-result">
-          <p>Showing 1–{showing} of {total} results</p>
+          <p>Hiển thị 1–{showing} của {total} kết quả</p>
         </div>
       </div>
     </>

@@ -9,9 +9,9 @@ import CommonBreadcrumb from '@/components/breadcrumb/common-breadcrumb';
 const CartPage = () => {
   return (
     <Wrapper>
-      <SEO pageTitle="Cart" />
+      <SEO pageTitle="Giỏ hàng" />
       <HeaderTwo style_2={true} />
-      <CommonBreadcrumb title="Shopping Cart" subtitle="Shopping Cart" />
+      <CommonBreadcrumb title="Giỏ hàng" subtitle="Giỏ hàng" />
       <CartArea/>
       <Footer primary_style={true} />
     </Wrapper>
