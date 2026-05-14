@@ -1,26 +1,62 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
+import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { useGetAllProductsQuery, useDeleteProductMutation } from '@/redux/features/productApi';
 import Loader from '@/components/loader/loader';
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, AlertCircle } from 'lucide-react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const AdminProducts = () => {
-  const { data: products, isLoading, isError, refetch } = useGetAllProductsQuery();
-  const [deleteProduct] = useDeleteProductMutation();
-  const searchTerm = useContext(AdminSearchContext);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredProducts = products?.data?.filter(p => 
-    p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  useEffect(() => {
+    const handler = (e) => setSearchTerm(e.detail);
+    if (adminSearchEvent) {
+      adminSearchEvent.addEventListener('search', handler);
+      return () => adminSearchEvent.removeEventListener('search', handler);
+    }
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+    setItems([]);
+    setHasMore(true);
+  }, [searchTerm]);
+
+  const { data, isLoading, isError, refetch } = useGetAllProductsQuery({ 
+    page, 
+    limit: 15, 
+    searchTerm: searchTerm 
+  });
+  const [deleteProduct] = useDeleteProductMutation();
+
+  useEffect(() => {
+    if (data?.data) {
+      setItems(prev => {
+        if (page === 1) return data.data;
+        const currentIds = new Set(prev.map(p => p._id));
+        const newItems = data.data.filter(p => !currentIds.has(p._id));
+        return [...prev, ...newItems];
+      });
+      setHasMore(data.data.length === 15);
+    }
+  }, [data, page]);
+
+  const fetchMoreData = () => {
+    setPage(prev => prev + 1);
+  };
+
+  const filteredProducts = items;
 
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
       try {
         await deleteProduct(id).unwrap();
-        refetch();
+        setItems(prev => prev.filter(p => p._id !== id));
       } catch (err) {
         console.error('Lỗi khi xóa sản phẩm', err);
       }
@@ -37,14 +73,15 @@ const AdminProducts = () => {
         </Link>
       </div>
 
-      <div className="admin-content-card glass-panel">
-        {isLoading ? (
-          <div className="d-flex justify-content-center p-5">
-            <Loader loading={isLoading} />
-          </div>
-        ) : isError ? (
-          <div className="text-danger p-5 text-center">Lỗi tải danh sách sản phẩm.</div>
-        ) : (
+      <div className="admin-content-card glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <InfiniteScroll
+          dataLength={filteredProducts.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<div className="text-center p-3"><Loader loading={true} /></div>}
+          endMessage={<div className="text-center p-3 text-muted">Đã hiển thị toàn bộ sản phẩm</div>}
+          scrollThreshold={0.9}
+        >
           <table className="admin-table">
             <thead>
               <tr>
@@ -66,9 +103,12 @@ const AdminProducts = () => {
                   <td style={{ color: 'var(--admin-text-sub)' }}>{product.category?.name}</td>
                   <td>${product.price}</td>
                   <td>
-                    <span className={`admin-badge ${product.quantity > 0 ? 'admin-badge-success' : 'admin-badge-danger'}`}>
-                      {product.quantity > 0 ? `Còn ${product.quantity} sp` : 'Hết hàng'}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className={`admin-badge ${product.quantity > 0 ? (product.quantity < 5 ? 'admin-badge-warning' : 'admin-badge-success') : 'admin-badge-danger'}`}>
+                        {product.quantity > 0 ? `${product.quantity} sp` : 'Hết hàng'}
+                      </span>
+                      {product.quantity > 0 && product.quantity < 5 && <AlertCircle size={14} color="var(--admin-warning)" title="Sắp hết hàng" />}
+                    </div>
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -84,7 +124,7 @@ const AdminProducts = () => {
               ))}
             </tbody>
           </table>
-        )}
+        </InfiniteScroll>
       </div>
 
     </AdminLayout>

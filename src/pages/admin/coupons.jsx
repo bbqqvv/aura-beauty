@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
+import React, { useState, useEffect } from 'react';
+import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Percent, X, Save, Image as ImageIcon } from 'lucide-react';
 import { useGetAllCouponsQuery, useDeleteCouponMutation, useAddCouponMutation, useUpdateCouponMutation } from '@/redux/features/couponApi';
@@ -12,7 +12,16 @@ const AdminCoupons = () => {
   const [addCoupon] = useAddCouponMutation();
   const [updateCoupon] = useUpdateCouponMutation();
 
-  const searchTerm = useContext(AdminSearchContext);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const handler = (e) => setSearchTerm(e.detail);
+    if (adminSearchEvent) {
+      adminSearchEvent.addEventListener('search', handler);
+      return () => adminSearchEvent.removeEventListener('search', handler);
+    }
+  }, []);
+
   const coupons = response?.data || [];
 
   const filteredCoupons = coupons.filter(coupon => 

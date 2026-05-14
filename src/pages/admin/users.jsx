@@ -1,21 +1,60 @@
-import React, { useState, useContext } from 'react';
-import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
+import React, { useState, useEffect } from 'react';
+import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Mail, Phone, X, Save } from 'lucide-react';
 import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useAddUserMutation } from '@/redux/features/userApi';
 import Loader from '@/components/loader/loader';
 import dayjs from 'dayjs';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const AdminUsers = () => {
-  const { data: response, isLoading, isError, refetch } = useGetAllUsersQuery();
-  const users = response?.data || [];
-  const searchTerm = useContext(AdminSearchContext);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredUsers = users.filter(user => 
-    user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.phone?.includes(searchTerm)
-  );
+  useEffect(() => {
+    const handler = (e) => setSearchTerm(e.detail);
+    if (adminSearchEvent) {
+      adminSearchEvent.addEventListener('search', handler);
+      return () => adminSearchEvent.removeEventListener('search', handler);
+    }
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+    setItems([]);
+    setHasMore(true);
+  }, [searchTerm]);
+
+  const { data: response, isLoading, isError, refetch } = useGetAllUsersQuery({
+    page,
+    limit: 15,
+    searchTerm: searchTerm
+  });
+  
+  useEffect(() => {
+    if (response?.data) {
+      setItems(prev => {
+        // Prevent duplicate appending if the response page is 1
+        if (page === 1) return response.data;
+        
+        // Otherwise append, but filter out duplicates by _id just in case
+        const currentIds = new Set(prev.map(p => p._id));
+        const newItems = response.data.filter(p => !currentIds.has(p._id));
+        return [...prev, ...newItems];
+      });
+      
+      // Calculate hasMore correctly
+      setHasMore(response.data.length === 15);
+    }
+  }, [response, page]);
+
+  const fetchMoreData = () => {
+    setPage(prev => prev + 1);
+  };
+
+  const filteredUsers = items;
 
   const [deleteUser] = useDeleteUserMutation();
   const [updateUser] = useUpdateUserMutation();
@@ -82,14 +121,15 @@ const AdminUsers = () => {
         </button>
       </div>
 
-      <div className="admin-content-card glass-panel">
-        {isLoading ? (
-          <div className="d-flex justify-content-center p-5">
-            <Loader loading={isLoading} />
-          </div>
-        ) : isError ? (
-          <div className="text-danger p-5 text-center">Lỗi tải dữ liệu người dùng.</div>
-        ) : (
+      <div className="admin-content-card glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <InfiniteScroll
+          dataLength={filteredUsers.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<div className="text-center p-3"><Loader loading={true} /></div>}
+          endMessage={<div className="text-center p-3 text-muted">Đã hiển thị toàn bộ khách hàng</div>}
+          scrollThreshold={0.9}
+        >
           <table className="admin-table">
             <thead>
               <tr>
@@ -148,7 +188,7 @@ const AdminUsers = () => {
               ))}
             </tbody>
           </table>
-        )}
+        </InfiniteScroll>
       </div>
 
       {isModalOpen && (

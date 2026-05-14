@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
+import React, { useState, useEffect } from 'react';
+import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { useGetAllProductsQuery, useUpdateProductMutation } from '@/redux/features/productApi';
 import Loader from '@/components/loader/loader';
@@ -9,10 +9,18 @@ import { notifySuccess, notifyError } from '@/utils/toast';
 const AdminInventory = () => {
   const { data: products, isLoading, isError, refetch } = useGetAllProductsQuery();
   const [updateProduct] = useUpdateProductMutation();
-  const searchTerm = useContext(AdminSearchContext);
-  
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const handler = (e) => setSearchTerm(e.detail);
+    if (adminSearchEvent) {
+      adminSearchEvent.addEventListener('search', handler);
+      return () => adminSearchEvent.removeEventListener('search', handler);
+    }
+  }, []);
+
   const [editingId, setEditingId] = useState(null);
-  const [newQuantity, setNewQuantity] = useState(0);
+  const [addedQuantity, setAddedQuantity] = useState(0);
 
   const filteredProducts = products?.data?.filter(p => 
     p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -20,13 +28,20 @@ const AdminInventory = () => {
   ).sort((a, b) => a.quantity - b.quantity) || [];
 
   const handleUpdateStock = async (product) => {
+    const added = Number(addedQuantity);
+    if (isNaN(added) || added < 0) {
+      notifyError("Vui lòng nhập số lượng hợp lệ (>= 0)");
+      return;
+    }
+
     try {
       await updateProduct({ 
         id: product._id, 
-        data: { ...product, quantity: Number(newQuantity) } 
+        data: { ...product, quantity: product.quantity + added } 
       }).unwrap();
-      notifySuccess("Cập nhật kho hàng thành công!");
+      notifySuccess(`Đã nhập thêm ${added} sản phẩm vào kho!`);
       setEditingId(null);
+      setAddedQuantity(0);
       refetch();
     } catch (err) {
       notifyError("Cập nhật thất bại");
@@ -80,16 +95,18 @@ const AdminInventory = () => {
                 <th>Sản phẩm</th>
                 <th>SKU</th>
                 <th>Giá bán</th>
-                <th>Số lượng</th>
+                <th>Hiện có</th>
+                <th>Nhập thêm</th>
                 <th>Trạng thái</th>
-                <th>Thao tác nhanh</th>
+                <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product.quantity);
+                const isEditing = editingId === product._id;
                 return (
-                  <tr key={product._id}>
+                  <tr key={product._id} style={{ background: isEditing ? 'rgba(9, 137, 255, 0.02)' : 'transparent' }}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <img src={product.img} alt="" style={{ width: '35px', height: '35px', borderRadius: '4px', objectFit: 'cover' }} />
@@ -99,16 +116,28 @@ const AdminInventory = () => {
                     <td style={{ fontSize: '0.85rem', color: 'var(--admin-text-sub)' }}>{product.sku || 'N/A'}</td>
                     <td>${product.price}</td>
                     <td style={{ fontWeight: 600 }}>
-                      {editingId === product._id ? (
-                        <input 
-                          type="number" 
-                          value={newQuantity} 
-                          onChange={(e) => setNewQuantity(e.target.value)}
-                          style={{ width: '70px', padding: '0.25rem', borderRadius: '4px', border: '1px solid var(--admin-accent)' }}
-                          autoFocus
-                        />
+                      {product.quantity}
+                      {isEditing && (
+                        <span style={{ color: 'var(--admin-success)', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
+                           → {product.quantity + (Number(addedQuantity) || 0)}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      {isEditing ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <span style={{ color: 'var(--admin-success)', fontWeight: 'bold' }}>+</span>
+                          <input 
+                            type="number" 
+                            min="0"
+                            value={addedQuantity} 
+                            onChange={(e) => setAddedQuantity(e.target.value)}
+                            style={{ width: '60px', padding: '0.2rem 0.4rem', borderRadius: '4px', border: '1px solid var(--admin-success)', outline: 'none' }}
+                            autoFocus
+                          />
+                        </div>
                       ) : (
-                        product.quantity
+                        <span style={{ color: 'var(--admin-text-sub)' }}>—</span>
                       )}
                     </td>
                     <td>
@@ -117,20 +146,20 @@ const AdminInventory = () => {
                       </span>
                     </td>
                     <td>
-                      {editingId === product._id ? (
+                      {isEditing ? (
                         <div style={{ display: 'flex', gap: '0.4rem' }}>
-                          <button onClick={() => handleUpdateStock(product)} className="admin-btn" style={{ padding: '0.3rem', background: 'var(--admin-success)', color: 'white' }}>
+                          <button onClick={() => handleUpdateStock(product)} className="admin-btn" style={{ padding: '0.4rem', background: 'var(--admin-success)', color: 'white' }} title="Xác nhận nhập kho">
                             <Save size={16} />
                           </button>
-                          <button onClick={() => setEditingId(null)} className="admin-btn" style={{ padding: '0.3rem', background: 'var(--admin-danger)', color: 'white' }}>
+                          <button onClick={() => setEditingId(null)} className="admin-btn" style={{ padding: '0.4rem', background: 'var(--admin-text-sub)', color: 'white' }}>
                             <X size={16} />
                           </button>
                         </div>
                       ) : (
                         <button 
-                          onClick={() => { setEditingId(product._id); setNewQuantity(product.quantity); }} 
+                          onClick={() => { setEditingId(product._id); setAddedQuantity(0); }} 
                           className="admin-btn" 
-                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)' }}
+                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)', fontWeight: 500 }}
                         >
                           Nhập thêm
                         </button>

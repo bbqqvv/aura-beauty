@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
+import React, { useState, useEffect } from 'react';
+import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Image as ImageIcon, X, Save } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
@@ -12,7 +12,15 @@ const Adminbrands = () => {
   const [addBrand] = useAddBrandMutation();
   const [updateBrand] = useUpdateBrandMutation();
   
-  const searchTerm = useContext(AdminSearchContext);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const handler = (e) => setSearchTerm(e.detail);
+    if (adminSearchEvent) {
+      adminSearchEvent.addEventListener('search', handler);
+      return () => adminSearchEvent.removeEventListener('search', handler);
+    }
+  }, []);
 
   const filteredbrands = brands?.result?.filter(Brand => 
     Brand.name?.toLowerCase().includes(searchTerm.toLowerCase())

@@ -58,7 +58,14 @@ export const authApi = apiSlice.injectEndpoints({
     }),
     // getAllOrders
     getAllOrders: builder.query({
-      query: () => `/api/order/orders`,
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params?.page) queryParams.append('page', params.page);
+        if (params?.limit) queryParams.append('limit', params.limit);
+        if (params?.searchTerm) queryParams.append('searchTerm', params.searchTerm);
+        
+        return `/api/order/orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      },
       providesTags:["Orders"],
       keepUnusedDataFor: 600,
     }),

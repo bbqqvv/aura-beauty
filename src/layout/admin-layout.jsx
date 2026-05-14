@@ -16,16 +16,23 @@ import {
   LogOut,
   Bell,
   Search,
-  Tag
+  Tag,
+  ClipboardList
 } from 'lucide-react';
 
-export const AdminSearchContext = React.createContext('');
+export const adminSearchEvent = typeof window !== 'undefined' ? new EventTarget() : null;
 
 const AdminLayout = ({ children, title }) => {
   const router = useRouter();
   const { user } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = React.useState('');
   const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    if (adminSearchEvent) {
+      adminSearchEvent.dispatchEvent(new CustomEvent('search', { detail: searchTerm }));
+    }
+  }, [searchTerm]);
 
   React.useEffect(() => {
     if (user) {
@@ -55,7 +62,7 @@ const AdminLayout = ({ children, title }) => {
     { title: 'Thương hiệu', link: '/admin/brands', icon: <Tag size={20} /> },
     { title: 'Danh mục', link: '/admin/categories', icon: <FolderTree size={20} /> },
     { title: 'Kho hàng', link: '/admin/inventory', icon: <Package size={20} /> },
-    { title: 'Đơn hàng', link: '/admin/orders', icon: <Package size={20} /> },
+    { title: 'Đơn hàng', link: '/admin/orders', icon: <ClipboardList size={20} /> },
     { title: 'Khách hàng', link: '/admin/users', icon: <Users size={20} /> },
     { title: 'Khuyến mãi', link: '/admin/coupons', icon: <Ticket size={20} /> },
   ];
@@ -101,17 +108,17 @@ const AdminLayout = ({ children, title }) => {
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Tìm kiếm..." 
+                placeholder={`Tìm kiếm trong ${title}...`} 
                 style={{ 
-                  padding: '0 0.8rem 0 2rem', 
-                  fontSize: '0.8rem',
-                  height: '30px',
-                  borderRadius: '4px', 
+                  padding: '0 0.8rem 0 2.2rem', 
+                  fontSize: '0.85rem',
+                  height: '34px',
+                  borderRadius: '6px', 
                   border: '1px solid var(--admin-border)', 
                   background: 'var(--admin-bg)',
                   outline: 'none',
-                  width: '100%',
-                  maxWidth: '160px'
+                  width: '240px',
+                  transition: 'all 0.2s'
                 }} 
               />
             </div>
@@ -127,9 +134,7 @@ const AdminLayout = ({ children, title }) => {
             </div>
           </div>
         </header>
-        <AdminSearchContext.Provider value={searchTerm}>
-          {children}
-        </AdminSearchContext.Provider>
+        {children}
       </main>
     </div>
   );

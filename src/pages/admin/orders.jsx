@@ -1,21 +1,56 @@
-import React, { useState, useContext } from 'react';
-import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
+import React, { useState, useEffect } from 'react';
+import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Eye, CheckCircle, Clock, Truck, X } from 'lucide-react';
 import { useGetAllOrdersQuery, useUpdateOrderStatusMutation } from '@/redux/features/order/orderApi';
 import Loader from '@/components/loader/loader';
 import dayjs from 'dayjs';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const AdminOrders = () => {
-  const { data: orders, isLoading, isError, refetch } = useGetAllOrdersQuery();
-  const [updateOrderStatus] = useUpdateOrderStatusMutation();
-  const searchTerm = useContext(AdminSearchContext);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredOrders = orders?.data?.filter(order => 
-    order._id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  useEffect(() => {
+    const handler = (e) => setSearchTerm(e.detail);
+    if (adminSearchEvent) {
+      adminSearchEvent.addEventListener('search', handler);
+      return () => adminSearchEvent.removeEventListener('search', handler);
+    }
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+    setItems([]);
+    setHasMore(true);
+  }, [searchTerm]);
+
+  const { data, isLoading, isError, refetch } = useGetAllOrdersQuery({ 
+    page, 
+    limit: 15, 
+    searchTerm: searchTerm 
+  });
+  const [updateOrderStatus] = useUpdateOrderStatusMutation();
+
+  useEffect(() => {
+    if (data?.data) {
+      setItems(prev => {
+        if (page === 1) return data.data;
+        const currentIds = new Set(prev.map(p => p._id));
+        const newItems = data.data.filter(p => !currentIds.has(p._id));
+        return [...prev, ...newItems];
+      });
+      setHasMore(data.data.length === 15);
+    }
+  }, [data, page]);
+
+  const fetchMoreData = () => {
+    setPage(prev => prev + 1);
+  };
+
+  const filteredOrders = items;
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +63,7 @@ const AdminOrders = () => {
   const updateStatus = async (id, newStatus) => {
     try {
       await updateOrderStatus({ id, status: newStatus }).unwrap();
-      refetch();
+      setItems(prev => prev.map(o => o._id === id ? { ...o, status: newStatus } : o));
     } catch (err) {
       console.error('Lỗi khi cập nhật trạng thái', err);
     }
@@ -65,14 +100,15 @@ const AdminOrders = () => {
     <AdminLayout title="Quản lý Đơn hàng">
       <SEO pageTitle="Quản lý Đơn hàng" />
 
-      <div className="admin-content-card glass-panel">
-        {isLoading ? (
-          <div className="d-flex justify-content-center p-5">
-            <Loader loading={isLoading} />
-          </div>
-        ) : isError ? (
-          <div className="text-danger p-5 text-center">Lỗi tải danh sách đơn hàng.</div>
-        ) : (
+      <div className="admin-content-card glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <InfiniteScroll
+          dataLength={filteredOrders.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<div className="text-center p-3"><Loader loading={true} /></div>}
+          endMessage={<div className="text-center p-3 text-muted">Đã hiển thị toàn bộ đơn hàng</div>}
+          scrollThreshold={0.9}
+        >
           <table className="admin-table">
             <thead>
               <tr>
@@ -125,7 +161,7 @@ const AdminOrders = () => {
               ))}
             </tbody>
           </table>
-        )}
+        </InfiniteScroll>
       </div>
 
       {isModalOpen && selectedOrder && (

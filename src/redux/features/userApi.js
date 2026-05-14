@@ -4,7 +4,14 @@ export const userApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: () => `/api/user/all`,
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params?.page) queryParams.append('page', params.page);
+        if (params?.limit) queryParams.append('limit', params.limit);
+        if (params?.searchTerm) queryParams.append('searchTerm', params.searchTerm);
+        
+        return `/api/user/all${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      },
       providesTags: ['Users']
     }),
     deleteUser: builder.mutation({
