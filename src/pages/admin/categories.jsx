@@ -2,11 +2,11 @@ import React, { useState, useContext } from 'react';
 import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Image as ImageIcon, X, Save } from 'lucide-react';
-import { useGetHi?n th?CategoryQuery, useDeleteCategoryMutation, useAddCategoryMutation, useUpdateCategoryMutation } from '@/redux/features/categoryApi';
+import { useGetShowCategoryQuery, useDeleteCategoryMutation, useAddCategoryMutation, useUpdateCategoryMutation } from '@/redux/features/categoryApi';
 import Loader from '@/components/loader/loader';
 
 const AdminCategories = () => {
-  const { data: categories, isLoading, isError, refetch } = useGetHi?n th?CategoryQuery();
+  const { data: categories, isLoading, isError, refetch } = useGetShowCategoryQuery();
   const [deleteCategory] = useDeleteCategoryMutation();
   const [addCategory] = useAddCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
