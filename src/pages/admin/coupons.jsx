@@ -11,6 +11,7 @@ const AdminCoupons = () => {
   const [deleteCoupon] = useDeleteCouponMutation();
   const [addCoupon] = useAddCouponMutation();
   const [updateCoupon] = useUpdateCouponMutation();
+  const { data: response, isError, isLoading, refetch } = useGetAllCouponsQuery();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -22,7 +23,7 @@ const AdminCoupons = () => {
     }
   }, []);
 
-  const coupons = response?.data || [];
+  const coupons = Array.isArray(response) ? response : (response?.data || []);
 
   const filteredCoupons = coupons.filter(coupon => 
     coupon.couponCode?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -200,7 +201,7 @@ const AdminCoupons = () => {
                   onClick={() => {
                     setFormData({
                       title: 'Khuyến Mãi Mùa Hè',
-                      logo: 'https://res.cloudinary.com/dwy42ngv3/image/upload/v1731671239/aura-beauty/y5oihw2x5ozw9vokzby8.jpg',
+                      logo: '/assets/img/product/premium-cosmetic.png',
                       couponCode: 'SUMMER' + Math.floor(Math.random() * 100),
                       discountPercentage: 20,
                       minimumAmount: 50,
@@ -259,12 +260,17 @@ const AdminCoupons = () => {
             <div className="admin-form-group">
               <label>Logo</label>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <input type="text" className="admin-input-premium" value={formData.logo} onChange={(e) => setFormData({...formData, logo: e.target.value})} placeholder="https://..." style={{ flex: 1 }} />
+                <input type="text" className="admin-input-premium" value={formData.logo} onChange={(e) => setFormData({...formData, logo: e.target.value})} placeholder="VD: /assets/img/product/premium-cosmetic.png" style={{ flex: 1 }} />
                 <label className="admin-btn" style={{ background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, border: '1px solid var(--admin-border)', borderRadius: '6px' }}>
                   <ImageIcon size={16} /> {uploading ? '...' : 'Tải lên'}
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
                 </label>
               </div>
+              {formData.logo && (
+                <div style={{ marginTop: '10px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--admin-border)', width: 'fit-content' }}>
+                  <img src={formData.logo} alt="Preview" style={{ maxWidth: '200px', maxHeight: '120px', objectFit: 'cover', display: 'block' }} />
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>

@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['i.ibb.co','lh3.googleusercontent.com','res.cloudinary.com', 'images.unsplash.com'],
+    domains: ['localhost', '127.0.0.1', 'i.ibb.co', 'lh3.googleusercontent.com', 'res.cloudinary.com', 'images.unsplash.com'],
   },
   async redirects() {
     return [

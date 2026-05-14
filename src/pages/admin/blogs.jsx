@@ -196,7 +196,7 @@ const AdminBlogs = () => {
                         author: 'Admin Aura',
                         category: 'Skincare',
                         tags: 'chăm sóc da, mùa hè, làm đẹp',
-                        img: 'https://res.cloudinary.com/dwy42ngv3/image/upload/v1731671239/aura-beauty/y5oihw2x5ozw9vokzby8.jpg',
+                        img: '/assets/img/product/premium-cosmetic.png',
                         sm_desc: 'Mùa hè nắng nóng luôn là nỗi ám ảnh với làn da. Khám phá 10 bí quyết đơn giản giúp da luôn tươi sáng và rạng rỡ.',
                         desc: '<p>Chi tiết bài viết mẫu dành cho chức năng blog. Bạn có thể chèn ảnh, định dạng văn bản tại đây.</p>',
                         status: 'active'
@@ -236,7 +236,12 @@ const AdminBlogs = () => {
 
               <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
                 <label>URL Hình ảnh (Thumbnail)</label>
-                <input type="text" name="img" value={formData.img} onChange={handleChange} placeholder="https://..." className="admin-input-premium" />
+                <input type="text" name="img" value={formData.img} onChange={handleChange} placeholder="VD: /assets/img/product/premium-cosmetic.png" className="admin-input-premium" />
+                {formData.img && (
+                  <div style={{ marginTop: '10px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--admin-border)', width: 'fit-content' }}>
+                    <img src={formData.img} alt="Preview" style={{ maxWidth: '200px', maxHeight: '120px', objectFit: 'cover', display: 'block' }} />
+                  </div>
+                )}
               </div>
 
               <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>

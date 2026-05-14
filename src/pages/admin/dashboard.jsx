@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import AdminLayout from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { 
@@ -134,9 +135,11 @@ const Dashboard = () => {
                 </td>
                 <td>${order.totalAmount?.toLocaleString() || 0}</td>
                 <td>
-                  <button className="admin-btn admin-btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>
-                    Chi tiết
-                  </button>
+                  <Link href="/admin/orders">
+                    <button className="admin-btn admin-btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>
+                      Chi tiết
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}
