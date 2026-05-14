@@ -54,6 +54,7 @@ const AdminLayout = ({ children, title }) => {
     { title: 'Sản phẩm', link: '/admin/products', icon: <ShoppingBag size={20} /> },
     { title: 'Thương hiệu', link: '/admin/brands', icon: <Tag size={20} /> },
     { title: 'Danh mục', link: '/admin/categories', icon: <FolderTree size={20} /> },
+    { title: 'Kho hàng', link: '/admin/inventory', icon: <Package size={20} /> },
     { title: 'Đơn hàng', link: '/admin/orders', icon: <Package size={20} /> },
     { title: 'Khách hàng', link: '/admin/users', icon: <Users size={20} /> },
     { title: 'Khuyến mãi', link: '/admin/coupons', icon: <Ticket size={20} /> },
@@ -92,7 +93,7 @@ const AdminLayout = ({ children, title }) => {
 
       <main className="admin-main">
         <header className="admin-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <h1 className="admin-page-title">{title}</h1>
             <div className="admin-search" style={{ position: 'relative' }}>
               <Search size={16} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-sub)' }} />
@@ -102,26 +103,27 @@ const AdminLayout = ({ children, title }) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Tìm kiếm..." 
                 style={{ 
-                  padding: '0.45rem 1rem 0.45rem 2.2rem', 
-                  fontSize: '0.9rem',
-                  borderRadius: '2rem', 
+                  padding: '0 0.8rem 0 2rem', 
+                  fontSize: '0.8rem',
+                  height: '30px',
+                  borderRadius: '4px', 
                   border: '1px solid var(--admin-border)', 
                   background: 'var(--admin-bg)',
                   outline: 'none',
                   width: '100%',
-                  maxWidth: '240px'
+                  maxWidth: '160px'
                 }} 
               />
             </div>
           </div>
-          <div className="admin-header-right" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div className="admin-header-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ color: 'var(--admin-text-sub)', cursor: 'pointer', position: 'relative' }}>
               <Bell size={22} />
               <span style={{ position: 'absolute', top: -2, right: -2, background: 'var(--admin-danger)', width: 8, height: 8, borderRadius: '50%' }}></span>
             </div>
             <div className="admin-user-info" style={{ borderLeft: '1px solid var(--admin-border)', paddingLeft: '1.5rem' }}>
               <span style={{ fontWeight: 500 }}>Quản trị viên</span>
-              <img src="https://i.ibb.co/wpjNftS/user-2.jpg" alt="Admin" style={{ width: '40px', height: '40px', borderRadius: '50%', marginLeft: '1rem' }} />
+              <img src="https://i.ibb.co/wpjNftS/user-2.jpg" alt="Admin" style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '0.8rem' }} />
             </div>
           </div>
         </header>

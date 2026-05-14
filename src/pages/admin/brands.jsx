@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Image as ImageIcon, X, Save } from 'lucide-react';
+import { slugify } from '@/utils/slugify';
 import { useGetAllBrandsQuery, useDeleteBrandMutation, useAddBrandMutation, useUpdateBrandMutation } from '@/redux/features/brandApi';
 import Loader from '@/components/loader/loader';
 
@@ -19,7 +20,7 @@ const Adminbrands = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState(null);
-  const [formData, setFormData] = useState({ name: '', logo: '', status: 'active' });
+  const [formData, setFormData] = useState({ name: '', slug: '', logo: '', status: 'active' });
   const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = async (e) => {
@@ -52,11 +53,12 @@ const Adminbrands = () => {
       setFormData({
         name: Brand.name || '',
         logo: Brand.logo || '',
+        slug: Brand.slug || '',
         status: Brand.status || 'active'
       });
     } else {
       setEditingBrand(null);
-      setFormData({ name: '', logo: '', status: 'active' });
+      setFormData({ name: '', slug: '', logo: '', status: 'active' });
     }
     setIsModalOpen(true);
   };
@@ -136,8 +138,8 @@ const Adminbrands = () => {
                   <td style={{ fontWeight: 500, textTransform: 'capitalize' }}>{Brand.name}</td>
                   <td>{Brand.products?.length || 0}</td>
                   <td>
-                    <span className={`admin-badge ${Brand.status === 'active' ? 'admin-badge-success' : 'admin-badge-danger'}`}>
-                      {Brand.status === 'active' ? 'Hoạt động' : 'Tạm ẩn'}
+                    <span className={`admin-badge ${Brand.status?.toLowerCase() === 'inactive' ? 'admin-badge-danger' : 'admin-badge-success'}`}>
+                      {Brand.status?.toLowerCase() === 'inactive' ? 'Tạm ẩn' : 'Hoạt động'}
                     </span>
                   </td>
                   <td>
@@ -173,20 +175,54 @@ const Adminbrands = () => {
                 type="text" 
                 className="admin-input-premium" 
                 value={formData.name} 
-                onChange={(e) => setFormData({...formData, name: e.target.value})} 
+                onChange={(e) => setFormData({...formData, name: e.target.value, slug: slugify(e.target.value)})} 
                 placeholder="e.g. L'Oreal" 
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>Slug (Đường dẫn thân thiện)</label>
+              <input 
+                type="text" 
+                className="admin-input-premium" 
+                value={formData.slug} 
+                onChange={(e) => setFormData({...formData, slug: e.target.value})} 
+                placeholder="loreal" 
               />
             </div>
             
             <div className="admin-form-group">
               <label>Hình ảnh</label>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: formData.logo ? '1rem' : '0' }}>
                 <input type="text" className="admin-input-premium" value={formData.logo} onChange={(e) => setFormData({...formData, logo: e.target.value})} placeholder="https://..." style={{ flex: 1 }} />
                 <label className="admin-btn" style={{ background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, border: '1px solid var(--admin-border)', borderRadius: '6px' }}>
                   <ImageIcon size={16} /> {uploading ? '...' : 'Tải lên'}
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
                 </label>
               </div>
+              {formData.logo && (
+                <div style={{ 
+                  width: '100%', 
+                  height: '150px', 
+                  border: '1px solid var(--admin-border)', 
+                  borderRadius: '8px', 
+                  overflow: 'hidden', 
+                  background: '#f8fafc',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  padding: '10px'
+                }}>
+                  <img src={formData.logo} alt="Preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                  <button 
+                    onClick={() => setFormData({...formData, logo: ''})} 
+                    style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(253, 75, 107, 0.1)', color: 'var(--admin-danger)', border: 'none', borderRadius: '4px', padding: '2px', cursor: 'pointer' }}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="admin-form-group">

@@ -12,6 +12,8 @@ import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
+import { slugify } from '@/utils/slugify';
+
 const AddProduct = () => {
   const router = useRouter();
   const [addProduct, { isLoading }] = useAddProductMutation();
@@ -22,7 +24,7 @@ const AddProduct = () => {
   
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '', price: '', discount: '', quantity: '', sku: '', 
+    title: '', slug: '', price: '', discount: '', quantity: '', sku: '', 
     category: '', children: '', brand: '', img: '', description: '', sizes: '',
     unit: 'pc', status: 'in-stock', tags: '', featured: false
   });
@@ -79,7 +81,16 @@ const AddProduct = () => {
     }
   };
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+    
+    if (name === 'title') {
+      setFormData({ ...formData, [name]: newValue, slug: slugify(newValue) });
+    } else {
+      setFormData({ ...formData, [name]: newValue });
+    }
+  };
 
   // Gallery
   const addGalleryImage = () => setImageURLs([...imageURLs, { color: { name: '', clrCode: '#000000' }, img: '' }]);
@@ -153,6 +164,11 @@ const AddProduct = () => {
             </div>
 
             <div className="admin-form-group">
+              <label>Slug (Đường dẫn thân thiện)</label>
+              <input type="text" name="slug" value={formData.slug} onChange={handleChange} placeholder="sua-rua-mat-tri-mun" className="admin-input-premium" />
+            </div>
+
+            <div className="admin-form-group">
               <label>Mô tả chi tiết <span style={{color: 'red'}}>*</span></label>
               <div style={{ background: '#fff' }}>
                 <ReactQuill theme="snow" value={formData.description} onChange={(val) => setFormData({...formData, description: val})} style={{ height: '200px', marginBottom: '50px' }} />
@@ -182,27 +198,41 @@ const AddProduct = () => {
             {imageURLs.length === 0 && <p style={{ color: 'var(--admin-text-sub)' }}>Chưa có ảnh nào được thêm.</p>}
             
             {imageURLs.map((item, index) => (
-              <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ fontSize: '0.85rem' }}>Tên màu</label>
-                  <input type="text" value={item.color.name} onChange={(e) => updateGalleryImage(index, 'name', e.target.value, true)} placeholder="VD: Hồng nhạt" className="admin-input-premium" style={{ padding: '0.5rem' }} />
+              <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', background: '#fff', padding: '1rem', borderRadius: '8px', border: '1px solid var(--admin-border)' }}>
+                {/* Preview Image */}
+                <div style={{ width: '60px', height: '60px', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--admin-border)', background: '#f8fafc', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {item.img ? (
+                    <img src={item.img} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  ) : (
+                    <ImageIcon size={20} style={{ color: '#cbd5e1' }} />
+                  )}
                 </div>
-                <div>
-                  <label style={{ fontSize: '0.85rem' }}>Mã Hex</label>
-                  <input type="color" value={item.color.clrCode} onChange={(e) => updateGalleryImage(index, 'clrCode', e.target.value, true)} style={{ height: '38px', width: '50px', padding: '0', border: '1px solid var(--admin-border)', borderRadius: '4px' }} />
-                </div>
-                <div style={{ flex: 2 }}>
-                  <label style={{ fontSize: '0.85rem' }}>URL Ảnh</label>
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <input type="text" value={item.img} onChange={(e) => updateGalleryImage(index, 'img', e.target.value)} placeholder="https://..." className="admin-input-premium" style={{ padding: '0.5rem', flex: 1 }} />
-                    <label className="admin-btn" style={{ background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, border: '1px solid var(--admin-border)', borderRadius: '6px', padding: '0.5rem' }}>
-                      <ImageIcon size={16} />
-                      <input type="file" accept="image/*" onChange={(e) => handleVariantImageUpload(e, index)} style={{ display: 'none' }} />
-                    </label>
+
+                {/* Inputs Grid */}
+                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 80px 2fr', gap: '1rem', alignItems: 'end' }}>
+                  <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', color: 'var(--admin-text-sub)' }}>Tên màu</label>
+                    <input type="text" value={item.color.name} onChange={(e) => updateGalleryImage(index, 'name', e.target.value, true)} placeholder="VD: Hồng" className="admin-input-premium" style={{ padding: '0.4rem' }} />
+                  </div>
+                  <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', color: 'var(--admin-text-sub)' }}>Mã màu</label>
+                    <input type="color" value={item.color.clrCode} onChange={(e) => updateGalleryImage(index, 'clrCode', e.target.value, true)} style={{ height: '34px', width: '100%', padding: '2px', border: '1px solid var(--admin-border)', borderRadius: '4px', cursor: 'pointer' }} />
+                  </div>
+                  <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', color: 'var(--admin-text-sub)' }}>URL Ảnh / Tải lên</label>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input type="text" value={item.img} onChange={(e) => updateGalleryImage(index, 'img', e.target.value)} placeholder="https://..." className="admin-input-premium" style={{ padding: '0.4rem', flex: 1 }} />
+                      <label className="admin-btn" style={{ background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0, border: '1px solid var(--admin-border)', borderRadius: '6px', width: '34px', height: '34px', padding: 0 }}>
+                        <ImageIcon size={16} />
+                        <input type="file" accept="image/*" onChange={(e) => handleVariantImageUpload(e, index)} style={{ display: 'none' }} />
+                      </label>
+                    </div>
                   </div>
                 </div>
-                <button type="button" onClick={() => removeGalleryImage(index)} className="admin-btn" style={{ padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--admin-danger)', height: '38px' }}>
-                  <Trash2 size={18} />
+
+                {/* Delete Button */}
+                <button type="button" onClick={() => removeGalleryImage(index)} className="admin-btn" style={{ padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--admin-danger)', height: '34px', width: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', flexShrink: 0 }}>
+                  <Trash2 size={16} />
                 </button>
               </div>
             ))}

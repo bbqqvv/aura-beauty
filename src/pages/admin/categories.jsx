@@ -2,11 +2,12 @@ import React, { useState, useContext } from 'react';
 import AdminLayout, { AdminSearchContext } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Image as ImageIcon, X, Save } from 'lucide-react';
-import { useGetShowCategoryQuery, useDeleteCategoryMutation, useAddCategoryMutation, useUpdateCategoryMutation } from '@/redux/features/categoryApi';
+import { slugify } from '@/utils/slugify';
+import { useGetAllCategoryQuery, useDeleteCategoryMutation, useAddCategoryMutation, useUpdateCategoryMutation } from '@/redux/features/categoryApi';
 import Loader from '@/components/loader/loader';
 
 const AdminCategories = () => {
-  const { data: categories, isLoading, isError, refetch } = useGetShowCategoryQuery();
+  const { data: categories, isLoading, isError, refetch } = useGetAllCategoryQuery();
   const [deleteCategory] = useDeleteCategoryMutation();
   const [addCategory] = useAddCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
@@ -19,7 +20,7 @@ const AdminCategories = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({ parent: '', img: '', status: 'Show' });
+  const [formData, setFormData] = useState({ parent: '', slug: '', img: '', status: 'Show' });
   const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = async (e) => {
@@ -52,11 +53,12 @@ const AdminCategories = () => {
       setFormData({
         parent: category.parent || '',
         img: category.img || '',
+        slug: category.slug || '',
         status: category.status || 'Show'
       });
     } else {
       setEditingCategory(null);
-      setFormData({ parent: '', img: '', status: 'Show' });
+      setFormData({ parent: '', slug: '', img: '', status: 'Show' });
     }
     setIsModalOpen(true);
   };
@@ -173,20 +175,54 @@ const AdminCategories = () => {
                 type="text" 
                 className="admin-input-premium" 
                 value={formData.parent} 
-                onChange={(e) => setFormData({...formData, parent: e.target.value})} 
+                onChange={(e) => setFormData({...formData, parent: e.target.value, slug: slugify(e.target.value)})} 
                 placeholder="e.g. Skincare" 
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>Slug (Đường dẫn thân thiện)</label>
+              <input 
+                type="text" 
+                className="admin-input-premium" 
+                value={formData.slug} 
+                onChange={(e) => setFormData({...formData, slug: e.target.value})} 
+                placeholder="skincare" 
               />
             </div>
             
             <div className="admin-form-group">
               <label>Hình ảnh</label>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: formData.img ? '1rem' : '0' }}>
                 <input type="text" className="admin-input-premium" value={formData.img} onChange={(e) => setFormData({...formData, img: e.target.value})} placeholder="https://..." style={{ flex: 1 }} />
                 <label className="admin-btn" style={{ background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, border: '1px solid var(--admin-border)', borderRadius: '6px' }}>
                   <ImageIcon size={16} /> {uploading ? '...' : 'Tải lên'}
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
                 </label>
               </div>
+              {formData.img && (
+                <div style={{ 
+                  width: '100%', 
+                  height: '150px', 
+                  border: '1px solid var(--admin-border)', 
+                  borderRadius: '8px', 
+                  overflow: 'hidden', 
+                  background: '#f8fafc',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  padding: '10px'
+                }}>
+                  <img src={formData.img} alt="Preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                  <button 
+                    onClick={() => setFormData({...formData, img: ''})} 
+                    style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(253, 75, 107, 0.1)', color: 'var(--admin-danger)', border: 'none', borderRadius: '4px', padding: '2px', cursor: 'pointer' }}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="admin-form-group">

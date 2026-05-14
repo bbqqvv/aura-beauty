@@ -15,6 +15,10 @@ export const categoryApi = apiSlice.injectEndpoints({
       query: () => `/api/category/show`,
       providesTags: ['Categories'],
     }),
+    getAllCategory: builder.query({
+      query: () => `/api/category/all`,
+      providesTags: ['Categories'],
+    }),
     getProductTypeCategory: builder.query({
       query: (type) => `/api/category/show/${type}`,
       providesTags: ['Categories'],
@@ -41,6 +45,7 @@ export const {
  useAddCategoryMutation,
  useGetProductTypeCategoryQuery,
  useGetShowCategoryQuery,
+ useGetAllCategoryQuery,
  useDeleteCategoryMutation,
  useUpdateCategoryMutation,
 } = categoryApi;
