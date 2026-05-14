@@ -11,7 +11,7 @@ const Adminbrands = () => {
   const [deleteBrand] = useDeleteBrandMutation();
   const [addBrand] = useAddBrandMutation();
   const [updateBrand] = useUpdateBrandMutation();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Adminbrands = () => {
     }
   }, []);
 
-  const filteredbrands = brands?.result?.filter(Brand => 
+  const filteredbrands = brands?.result?.filter(Brand =>
     Brand.name?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
@@ -136,7 +136,7 @@ const Adminbrands = () => {
                 <tr key={Brand._id}>
                   <td>
                     {Brand.logo ? (
-                       <img src={Brand.logo} alt={Brand.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', background: '#F6F7F9', padding: '5px' }} />
+                      <img src={Brand.logo} alt={Brand.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', background: '#F6F7F9', padding: '5px' }} />
                     ) : (
                       <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F6F7F9', borderRadius: '4px', color: 'var(--admin-text-sub)' }}>
                         <ImageIcon size={20} />
@@ -173,48 +173,69 @@ const Adminbrands = () => {
             <button onClick={handleCloseModal} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-sub)' }}>
               <X size={24} />
             </button>
-            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 600 }}>
-              {editingBrand ? 'Chỉnh sửa Thương hiệu' : 'Thêm mới Thương hiệu'}
-            </h3>
-            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                {editingBrand ? 'Chỉnh sửa Thương hiệu' : 'Thêm mới Thương hiệu'}
+              </h3>
+              {!editingBrand && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const testName = 'Test Brand ' + Math.floor(Math.random() * 100);
+                    setFormData({
+                      name: testName,
+                      slug: slugify(testName),
+                      logo: 'https://res.cloudinary.com/dwy42ngv3/image/upload/v1731671239/aura-beauty/y5oihw2x5ozw9vokzby8.jpg',
+                      status: 'active'
+                    });
+                    notifySuccess('Đã điền dữ liệu mẫu!');
+                  }}
+                  className="admin-btn"
+                  style={{ background: '#f59e0b', color: 'white', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '2rem' }}
+                >
+                  Auto Fill
+                </button>
+              )}
+            </div>
+
             <div className="admin-form-group">
               <label>Tên thương hiệu</label>
-              <input 
-                type="text" 
-                className="admin-input-premium" 
-                value={formData.name} 
-                onChange={(e) => setFormData({...formData, name: e.target.value, slug: slugify(e.target.value)})} 
-                placeholder="e.g. L'Oreal" 
+              <input
+                type="text"
+                className="admin-input-premium"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: slugify(e.target.value) })}
+                placeholder="e.g. L'Oreal"
               />
             </div>
 
             <div className="admin-form-group">
               <label>Slug (Đường dẫn thân thiện)</label>
-              <input 
-                type="text" 
-                className="admin-input-premium" 
-                value={formData.slug} 
-                onChange={(e) => setFormData({...formData, slug: e.target.value})} 
-                placeholder="loreal" 
+              <input
+                type="text"
+                className="admin-input-premium"
+                value={formData.slug}
+                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                placeholder="loreal"
               />
             </div>
-            
+
             <div className="admin-form-group">
               <label>Hình ảnh</label>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: formData.logo ? '1rem' : '0' }}>
-                <input type="text" className="admin-input-premium" value={formData.logo} onChange={(e) => setFormData({...formData, logo: e.target.value})} placeholder="https://..." style={{ flex: 1 }} />
+                <input type="text" className="admin-input-premium" value={formData.logo} onChange={(e) => setFormData({ ...formData, logo: e.target.value })} placeholder="https://..." style={{ flex: 1 }} />
                 <label className="admin-btn" style={{ background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, border: '1px solid var(--admin-border)', borderRadius: '6px' }}>
                   <ImageIcon size={16} /> {uploading ? '...' : 'Tải lên'}
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
                 </label>
               </div>
               {formData.logo && (
-                <div style={{ 
-                  width: '100%', 
-                  height: '150px', 
-                  border: '1px solid var(--admin-border)', 
-                  borderRadius: '8px', 
-                  overflow: 'hidden', 
+                <div style={{
+                  width: '100%',
+                  height: '150px',
+                  border: '1px solid var(--admin-border)',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
                   background: '#f8fafc',
                   display: 'flex',
                   alignItems: 'center',
@@ -223,8 +244,8 @@ const Adminbrands = () => {
                   padding: '10px'
                 }}>
                   <img src={formData.logo} alt="Preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                  <button 
-                    onClick={() => setFormData({...formData, logo: ''})} 
+                  <button
+                    onClick={() => setFormData({ ...formData, logo: '' })}
                     style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(253, 75, 107, 0.1)', color: 'var(--admin-danger)', border: 'none', borderRadius: '4px', padding: '2px', cursor: 'pointer' }}
                   >
                     <X size={14} />
@@ -235,10 +256,10 @@ const Adminbrands = () => {
 
             <div className="admin-form-group">
               <label>Trạng thái</label>
-              <select 
-                className="admin-input-premium" 
-                value={formData.status} 
-                onChange={(e) => setFormData({...formData, status: e.target.value})}
+              <select
+                className="admin-input-premium"
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               >
                 <option value="active">Hoạt động</option>
                 <option value="inactive">Tạm ẩn</option>

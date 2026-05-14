@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GridTab, ListTab } from '@/svg';
 import GridItem from './grid-item';
 import ListItem from './list-item';
 import Pagination from '@/ui/Pagination';
 import BlogSidebar from '../blog-postox/blog-sidebar';
-import blogData from '@/data/blog-data';
-
-// blog items
-const blog_items = blogData.filter((b) => b.blog === "blog-grid");
+import { useGetAllBlogsQuery } from "@/redux/features/blogApi";
 
 const BlogGridArea = ({ list_area = false }) => {
+  const { data: blogsData, isLoading } = useGetAllBlogsQuery();
+  const blog_items = blogsData?.result || [];
 
-  const [filteredRows, setFilteredRows] = useState(blog_items);
+  const [filteredRows, setFilteredRows] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [pageStart, setPageStart] = useState(0);
   const [countOfPage, setCountOfPage] = useState(6);
+
+  useEffect(() => {
+    if (blog_items.length > 0) {
+      setFilteredRows(blog_items);
+    }
+  }, [blog_items]);
 
   const paginatedData = (items, startPage, pageCount) => {
     setFilteredRows(items);
     setPageStart(startPage);
     setCountOfPage(pageCount);
   };
+
+  if (isLoading) return <div className="text-center pt-100 pb-100">Đang tải bài viết...</div>;
 
   return (
     <>

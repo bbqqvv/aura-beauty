@@ -5,13 +5,13 @@ import { ArrowRightLong, Comment, Date } from "@/svg";
 // internal
 
 const GridItem = ({ blog,style_2=false }) => {
-  const {id, img, date, comments, author, title, desc } = blog || {};
+  const {_id: id, img, date, comments, author, title, desc } = blog || {};
   return (
     <>
       <div className={`tp-blog-grid-item ${style_2?'tp-blog-grid-style2':''} p-relative mb-30`}>
         <div className="tp-blog-grid-thumb fix mb-30">
           <Link href={`/blog-details/${id}`}>
-            <Image src={img} alt="blog img"  style={{width:'100%',height:'100%'}} />
+            <img src={img} alt="blog img" style={{width:'100%',height:'100%'}} />
           </Link>
         </div>
         <div className="tp-blog-grid-content">
@@ -20,7 +20,7 @@ const GridItem = ({ blog,style_2=false }) => {
               <span>
                 <Date/>
               </span>
-              {" "}{date}
+              {" "}{new globalThis.Date(date).toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})}
             </span>
             <span>
               <span>
@@ -32,7 +32,7 @@ const GridItem = ({ blog,style_2=false }) => {
           <h3 className="tp-blog-grid-title">
             <Link href={`/blog-details/${id}`}>{title}</Link>
           </h3>
-          <p>{desc}</p>
+          <div dangerouslySetInnerHTML={{__html: desc}} />
 
           <div className="tp-blog-grid-btn">
             <Link href={`/blog-details/${id}`} className="tp-link-btn-3">

@@ -5,12 +5,12 @@ import Image from 'next/image';
 import user from '@assets/img/users/user-11.jpg';
 import signature from '@assets/img/blog/signature/signature.png';
 import { Search } from '@/svg';
-import blogData from '@/data/blog-data';
-
-// latest post
-const latest_post = blogData.slice(0,3)
+import { useGetAllBlogsQuery } from "@/redux/features/blogApi";
 
 const BlogSidebar = () => {
+  const { data: blogsData, isLoading } = useGetAllBlogsQuery();
+  const latest_post = blogsData?.result ? blogsData.result.slice(0, 3) : [];
+
   return (
     <>
       <div className="tp-sidebar-wrapper tp-sidebar-ml--24">
@@ -34,7 +34,7 @@ const BlogSidebar = () => {
             <div className="tp-sidebar-about">
               <div className="tp-sidebar-about-thumb mb-25">
                 <a href="#">
-                  <Image src={user} alt="user" />
+                  <img src={user} alt="user" style={{width:"100%", height:"100%", objectFit:"cover"}} />
                 </a>
               </div>
               <div className="tp-sidebar-about-content">
@@ -44,7 +44,7 @@ const BlogSidebar = () => {
                 <span className="tp-sidebar-about-designation">Photographer & Blogger</span>
                 <p>Lorem ligula eget dolor. Aenean massa. Cum sociis que penatibus magnis dis parturient</p>
                 <div className="tp-sidebar-about-signature">
-                  <Image src={signature} alt="signature" />
+                  <img src={signature} alt="signature" style={{width:"100%", height:"100%", objectFit:"cover"}} />
                 </div>
               </div>
             </div>
@@ -58,18 +58,18 @@ const BlogSidebar = () => {
           <div className="tp-sidebar-widget-content">
             <div className="tp-sidebar-blog-item-wrapper">
               {latest_post.map(b => (
-              <div key={b.id} className="tp-sidebar-blog-item d-flex align-items-center">
+              <div key={(b._id || b.id)} className="tp-sidebar-blog-item d-flex align-items-center">
                 <div className="tp-sidebar-blog-thumb">
-                  <Link href={`/blog-details/${b.id}`}>
-                    <Image src={b.img} alt="blog img" />
+                  <Link href={`/blog-details/${(b._id || b.id)}`}>
+                    <img src={b.img} alt="blog img" style={{width:"100%", height:"100%", objectFit:"cover"}} />
                   </Link>
                 </div>
                 <div className="tp-sidebar-blog-content">
                   <div className="tp-sidebar-blog-meta">
-                    <span>{b.date}</span>
+                    <span>{new globalThis.Date(b.date).toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})}</span>
                   </div>
                   <h3 className="tp-sidebar-blog-title">
-                    <Link href={`/blog-details/${b.id}`}>{b.title}</Link>
+                    <Link href={`/blog-details/${(b._id || b.id)}`}>{b.title}</Link>
                   </h3>
                 </div>
               </div>

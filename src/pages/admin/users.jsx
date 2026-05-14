@@ -6,6 +6,7 @@ import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useA
 import Loader from '@/components/loader/loader';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { notifySuccess } from '@/utils/toast';
 
 const AdminUsers = () => {
   const [page, setPage] = useState(1);
@@ -69,6 +70,7 @@ const AdminUsers = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
       try {
         await deleteUser(id).unwrap();
+        setPage(1);
         refetch();
       } catch (err) {
         alert("Lỗi khi xóa người dùng");
@@ -101,6 +103,7 @@ const AdminUsers = () => {
         await addUser(formData).unwrap();
       }
       setIsModalOpen(false);
+      setPage(1);
       refetch();
     } catch (err) {
       alert("Thao tác thất bại. Email có thể đã tồn tại.");
@@ -196,7 +199,29 @@ const AdminUsers = () => {
           <div className="glass-panel" style={{ background: '#fff', padding: '2rem', width: '100%', maxWidth: '500px', borderRadius: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--admin-border)', paddingBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>{isEditMode ? 'Chỉnh sửa Người dùng' : 'Thêm mới Người dùng'}</h3>
-              <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-sub)' }}><X size={24} /></button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {!isEditMode && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const testId = Math.floor(Math.random() * 1000);
+                      setFormData({
+                        name: 'Test User ' + testId,
+                        email: `testuser${testId}@example.com`,
+                        phone: '09' + Math.floor(10000000 + Math.random() * 90000000),
+                        role: 'user',
+                        password: 'password123'
+                      });
+                      notifySuccess('Đã điền dữ liệu mẫu!');
+                    }}
+                    className="admin-btn"
+                    style={{ background: '#f59e0b', color: 'white', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  >
+                    Auto Fill
+                  </button>
+                )}
+                <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-sub)' }}><X size={24} /></button>
+              </div>
             </div>
             <form onSubmit={handleModalSubmit}>
               <div className="admin-form-group">

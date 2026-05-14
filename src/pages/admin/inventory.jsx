@@ -7,7 +7,7 @@ import { AlertCircle, ArrowUpRight, Package, Save, CheckCircle, X } from 'lucide
 import { notifySuccess, notifyError } from '@/utils/toast';
 
 const AdminInventory = () => {
-  const { data: products, isLoading, isError, refetch } = useGetAllProductsQuery();
+  const { data: products, isLoading, isError, refetch } = useGetAllProductsQuery(undefined, { refetchOnMountOrArgChange: true });
   const [updateProduct] = useUpdateProductMutation();
   const [searchTerm, setSearchTerm] = useState('');
 

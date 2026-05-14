@@ -37,7 +37,7 @@ const BeautyCategory = () => {
     content = <ErrorMsg msg="Không tìm thấy danh mục nào!" />;
   }
   if (!isLoading && !isError && categories?.result?.length > 0) {
-    const category_items = categories.result;
+    const category_items = categories.result.slice(0, 4); // Chỉ hiển thị 4 danh mục (1 hàng)
     content = category_items.map((item) => (
       <div key={item._id} className="col-lg-3 col-sm-6">
         <div className="tp-category-item-3 p-relative black-bg text-center z-index-1 fix mb-30">

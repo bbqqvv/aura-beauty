@@ -32,15 +32,15 @@ const BlogItem = ({ item = {} }) => {
           !item.audio &&
           !item.slider && (
             <div className="tp-postbox-thumb w-img">
-              <Link href={`/blog-details/${item.id}`}>
-                <Image src={item.img} alt="blog img" />
+              <Link href={`/blog-details/${(item._id || item.id)}`}>
+                <img src={item.img} alt="blog img" style={{width:"100%", height:"100%", objectFit:"cover"}} />
               </Link>
             </div>
           )}
         {item.video && (
           <div className="tp-postbox-thumb tp-postbox-video w-img p-relative">
-            <Link href={`/blog-details/${item.id}`}>
-              <Image src={item.img} alt="blog img" />
+            <Link href={`/blog-details/${(item._id || item.id)}`}>
+              <img src={item.img} alt="blog img" style={{width:"100%", height:"100%", objectFit:"cover"}} />
             </Link>
             <a
               onClick={() => setIsVideoOpen(true)}
@@ -62,7 +62,7 @@ const BlogItem = ({ item = {} }) => {
           <Swiper {...slider_setting} modules={[Navigation, Autoplay]} className="tp-postbox-thumb tp-postbox-slider swiper-container w-img p-relative">
             {item.slider_images.map((img, i) => (
               <SwiperSlide key={i} className="tp-postbox-slider-item">
-                <Image src={img} alt="slider img" />
+                <img src={img} alt="slider img" style={{width:"100%", height:"100%", objectFit:"cover"}} />
               </SwiperSlide>
             ))}
             <div className="tp-postbox-nav">
@@ -79,7 +79,7 @@ const BlogItem = ({ item = {} }) => {
           <div className="tp-postbox-content">
             <div className="tp-postbox-meta">
               <span>
-                <i className="far fa-calendar-check"></i> {item.date}
+                <i className="far fa-calendar-check"></i> {new globalThis.Date(item.date).toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})}
               </span>
               <span>
                 <a href="#">
@@ -93,18 +93,15 @@ const BlogItem = ({ item = {} }) => {
               </span>
             </div>
             <h3 className="tp-postbox-title">
-              <Link href={`/blog-details/${item.id}`}>
+              <Link href={`/blog-details/${(item._id || item.id)}`}>
                 {item.title}
               </Link>
             </h3>
             <div className="tp-postbox-text">
-              <p>
-                {item.desc}
-                […]
-              </p>
+              <div dangerouslySetInnerHTML={{__html: item.desc}} />
             </div>
             <div className="tp-postbox-read-more">
-              <Link href={`/blog-details/${item.id}`} className="tp-btn">
+              <Link href={`/blog-details/${(item._id || item.id)}`} className="tp-btn">
                 Read More
               </Link>
             </div>

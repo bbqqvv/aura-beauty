@@ -17,7 +17,8 @@ import {
   Bell,
   Search,
   Tag,
-  ClipboardList
+  ClipboardList,
+  FileText
 } from 'lucide-react';
 
 export const adminSearchEvent = typeof window !== 'undefined' ? new EventTarget() : null;
@@ -65,6 +66,7 @@ const AdminLayout = ({ children, title }) => {
     { title: 'Đơn hàng', link: '/admin/orders', icon: <ClipboardList size={20} /> },
     { title: 'Khách hàng', link: '/admin/users', icon: <Users size={20} /> },
     { title: 'Khuyến mãi', link: '/admin/coupons', icon: <Ticket size={20} /> },
+    { title: 'Bài viết (Blog)', link: '/admin/blogs', icon: <FileText size={20} /> },
   ];
 
   return (

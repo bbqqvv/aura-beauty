@@ -13,6 +13,7 @@ import 'react-quill/dist/quill.snow.css';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 import { slugify } from '@/utils/slugify';
+import { notifySuccess } from '@/utils/toast';
 
 const AddProduct = () => {
   const router = useRouter();
@@ -147,10 +148,50 @@ const AddProduct = () => {
     <AdminLayout title="Add New Product">
       <SEO pageTitle="Add Product" />
       
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link href="/admin/products" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--admin-text-sub)', textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }}>
           <ArrowLeft size={18} /> Quay lại danh sách Sản phẩm
         </Link>
+        
+        <button 
+          type="button" 
+          onClick={() => {
+            const defaultCategory = categories[0]?._id || '';
+            const defaultChildren = categories[0]?.children?.[0] || '';
+            const defaultBrand = brands[0]?._id || '';
+            
+            setFormData({
+              title: 'Kem Dưỡng Ẩm Phục Hồi Da (Test)',
+              slug: 'kem-duong-am-phuc-hoi-da-test',
+              price: '45.00',
+              discount: '15',
+              quantity: '150',
+              sku: 'TEST-SKU-' + Math.floor(Math.random() * 1000),
+              category: defaultCategory,
+              children: defaultChildren,
+              brand: defaultBrand,
+              img: 'https://res.cloudinary.com/dwy42ngv3/image/upload/v1731671239/aura-beauty/y5oihw2x5ozw9vokzby8.jpg',
+              description: '<p>Đây là dữ liệu mẫu tự động được điền để phục vụ quá trình test chức năng. Kem dưỡng ẩm phục hồi da chuyên sâu giúp làm dịu và tái tạo làn da tổn thương.</p><ul><li>Cấp ẩm sâu 24h</li><li>Thành phần an toàn, lành tính</li><li>Phù hợp cho mọi loại da</li></ul>',
+              sizes: '30ml, 50ml, 100ml',
+              unit: 'hũ',
+              status: 'in-stock',
+              tags: 'dưỡng ẩm, phục hồi, da nhạy cảm',
+              featured: true
+            });
+            setImageURLs([
+              { color: { name: 'Mặc định', clrCode: '#ffffff' }, img: 'https://res.cloudinary.com/dwy42ngv3/image/upload/v1731671239/aura-beauty/y5oihw2x5ozw9vokzby8.jpg' }
+            ]);
+            setAdditionalInfo([
+              { key: 'Xuất xứ', value: 'Hàn Quốc' },
+              { key: 'Hạn sử dụng', value: '3 năm kể từ ngày sản xuất' }
+            ]);
+            notifySuccess('Đã điền dữ liệu mẫu thành công!');
+          }}
+          className="admin-btn"
+          style={{ background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}
+        >
+          Auto Fill Test Data
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} className="admin-product-form-container">

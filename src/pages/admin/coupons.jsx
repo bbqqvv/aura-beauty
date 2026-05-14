@@ -5,9 +5,9 @@ import { Edit, Trash2, Plus, Percent, X, Save, Image as ImageIcon } from 'lucide
 import { useGetAllCouponsQuery, useDeleteCouponMutation, useAddCouponMutation, useUpdateCouponMutation } from '@/redux/features/couponApi';
 import Loader from '@/components/loader/loader';
 import dayjs from 'dayjs';
+import { notifySuccess } from '@/utils/toast';
 
 const AdminCoupons = () => {
-  const { data: response, isLoading, isError, refetch } = useGetAllCouponsQuery();
   const [deleteCoupon] = useDeleteCouponMutation();
   const [addCoupon] = useAddCouponMutation();
   const [updateCoupon] = useUpdateCouponMutation();
@@ -190,9 +190,32 @@ const AdminCoupons = () => {
             <button onClick={handleCloseModal} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-sub)' }}>
               <X size={24} />
             </button>
-            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 600 }}>
-              {editingCoupon ? 'Chỉnh sửa Khuyến mãi' : 'Thêm mới Khuyến mãi'}
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                {editingCoupon ? 'Chỉnh sửa Khuyến mãi' : 'Thêm mới Khuyến mãi'}
+              </h3>
+              {!editingCoupon && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({
+                      title: 'Khuyến Mãi Mùa Hè',
+                      logo: 'https://res.cloudinary.com/dwy42ngv3/image/upload/v1731671239/aura-beauty/y5oihw2x5ozw9vokzby8.jpg',
+                      couponCode: 'SUMMER' + Math.floor(Math.random() * 100),
+                      discountPercentage: 20,
+                      minimumAmount: 50,
+                      endTime: dayjs().add(1, 'month').format('YYYY-MM-DDTHH:mm'),
+                      status: 'active'
+                    });
+                    notifySuccess('Đã điền dữ liệu mẫu!');
+                  }}
+                  className="admin-btn"
+                  style={{ background: '#f59e0b', color: 'white', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '2rem' }}
+                >
+                  Auto Fill
+                </button>
+              )}
+            </div>
             
             <div className="row">
               <div className="col-md-6">

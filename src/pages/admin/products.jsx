@@ -31,8 +31,12 @@ const AdminProducts = () => {
     page, 
     limit: 15, 
     searchTerm: searchTerm 
-  });
+  }, { refetchOnMountOrArgChange: true });
   const [deleteProduct] = useDeleteProductMutation();
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   useEffect(() => {
     if (data?.data) {
