@@ -16,7 +16,7 @@ const schema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().required().min(6).label("Password"),
 });
-const LoginForm = () => {
+const LoginForm = ({ redirectUrl }) => {
   const [showPass, setShowPass] = useState(false);
   const [loginUser, { }] = useLoginUserMutation();
   const router = useRouter();
@@ -39,7 +39,7 @@ const LoginForm = () => {
       .then((data) => {
         if (data?.data) {
           notifySuccess("Đăng nhập thành công");
-          router.push(redirect || "/");
+          router.push(redirectUrl || redirect || "/");
         }
         else {
           notifyError(data?.error?.data?.error || "Đăng nhập thất bại")

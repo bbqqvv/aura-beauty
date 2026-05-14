@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CardElement } from "@stripe/react-stripe-js";
 import { useSelector } from "react-redux";
 // internal
 import useCartInfo from "@/hooks/use-cart-info";
@@ -115,38 +114,47 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             {...register(`payment`, {
               required: `Vui lòng chọn phương thức thanh toán!`,
             })}
+            onClick={() => setShowCard(false)}
             type="radio"
-            id="back_transfer"
+            id="sepay"
             name="payment"
-            value="Card"
+            value="SEPay"
           />
-          <label onClick={() => setShowCard(true)} htmlFor="back_transfer" data-bs-toggle="direct-bank-transfer">
-            Thẻ tín dụng
-          </label>
+          <label htmlFor="sepay">Thanh toán tự động qua SEPay</label>
+          <ErrorMsg msg={errors?.payment?.message} />
+        </div>
+        
+        <div className="tp-checkout-payment-item">
+          <input
+            {...register(`payment`, {
+              required: `Vui lòng chọn phương thức thanh toán!`,
+            })}
+            onClick={() => setShowCard(true)}
+            type="radio"
+            id="qr_payment"
+            name="payment"
+            value="QR"
+          />
+          <label htmlFor="qr_payment">Chuyển khoản qua mã QR</label>
           {showCard && (
-            <div className="direct-bank-transfer">
-              <div className="payment_card">
-                <CardElement
-                  options={{
-                    style: {
-                      base: {
-                        fontSize: "16px",
-                        color: "#424770",
-                        "::placeholder": {
-                          color: "#aab7c4",
-                        },
-                      },
-                      invalid: {
-                        color: "#9e2146",
-                      },
-                    },
-                  }}
-                />
-              </div>
+            <div className="direct-bank-transfer mt-2 p-3 border rounded text-center">
+               <p className="mb-2" style={{ fontSize: '14px' }}>Quét mã QR dưới đây để thanh toán:</p>
+               <img 
+                 src={`https://img.vietqr.io/image/MB-123456789-compact2.png?amount=${cartTotal}&addInfo=AuraOrder&accountName=AURA%20BEAUTY`} 
+                 alt="QR Code" 
+                 style={{ maxWidth: '200px', margin: '10px auto' }} 
+               />
+               <div className="text-start mt-2" style={{ fontSize: '13px' }}>
+                 <p className="mb-1"><strong>Ngân hàng:</strong> MB Bank</p>
+                 <p className="mb-1"><strong>Số tài khoản:</strong> 123456789</p>
+                 <p className="mb-1"><strong>Chủ tài khoản:</strong> AURA BEAUTY</p>
+                 <p className="mb-0"><strong>Nội dung:</strong> AuraOrder</p>
+               </div>
             </div>
           )}
           <ErrorMsg msg={errors?.payment?.message} />
         </div>
+
         <div className="tp-checkout-payment-item">
           <input
             {...register(`payment`, {
@@ -166,7 +174,7 @@ const CheckoutOrderArea = ({ checkoutData }) => {
       <div className="tp-checkout-btn-wrapper">
         <button
           type="submit"
-          disabled={!stripe || isCheckoutSubmit}
+          disabled={isCheckoutSubmit}
           className="tp-checkout-btn w-100"
         >
           Đặt hàng

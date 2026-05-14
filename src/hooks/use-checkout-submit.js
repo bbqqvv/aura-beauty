@@ -1,7 +1,6 @@
 import * as dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
@@ -55,9 +54,6 @@ const useCheckoutSubmit = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
-
   const {register,handleSubmit,setValue,formState: { errors }} = useForm();
 
   let couponRef = useRef("");
@@ -214,90 +210,22 @@ const useCheckoutSubmit = () => {
       orderNote:data.orderNote,
       user: `${user?._id}`,
     };
-    if (data.payment === 'Card') {
-      if (!stripe || !elements) {
-        return;
-      }
-      const card = elements.getElement(CardElement);
-      if (card == null) {
-        return;
-      }
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: card,
-      });
-      if (error && !paymentMethod) {
-        setCardError(error.message);
-        setIsCheckoutSubmit(false);
-      } else {
-        setCardError('');
-        const orderData = {
-          ...orderInfo,
-          cardInfo: paymentMethod,
-        };
 
-       return handlePaymentWithStripe(orderData);
+    saveOrder({
+      ...orderInfo
+    }).then(res => {
+      if(res?.error){
+        notifyError("Có lỗi xảy ra khi đặt hàng!");
+        setIsCheckoutSubmit(false)
       }
-    }
-    if (data.payment === 'COD') {
-      saveOrder({
-        ...orderInfo
-      }).then(res => {
-        if(res?.error){
-        }
-        else {
-          localStorage.removeItem("cart_products")
-          localStorage.removeItem("couponInfo");
-          setIsCheckoutSubmit(false)
-          notifySuccess("Your Order Confirmed!");
-          router.push(`/order/${res.data?.order?._id}`);
-        }
-      })
-    }
-  };
-
-  // handlePaymentWithStripe
-  const handlePaymentWithStripe = async (order) => {
-    try {
-      const {paymentIntent, error:intentErr} = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: elements.getElement(CardElement),
-            billing_details: {
-              name: user?.firstName,
-              email: user?.email,
-            },
-          },
-        },
-      );
-      if (intentErr) {
-        notifyError(intentErr.message);
-      } else {
-        // notifySuccess("Your payment processed successfully");
+      else {
+        localStorage.removeItem("cart_products")
+        localStorage.removeItem("couponInfo");
+        setIsCheckoutSubmit(false)
+        notifySuccess("Đơn hàng của bạn đã được xác nhận!");
+        router.push(`/order/${res.data?.order?._id}`);
       }
-
-      const orderData = {
-        ...order,
-        paymentIntent,
-      };
-
-      saveOrder({
-        ...orderData
-      })
-      .then((result) => {
-          if(result?.error){
-          }
-          else {
-            localStorage.removeItem("couponInfo");
-            notifySuccess("Your Order Confirmed!");
-            router.push(`/order/${result.data?.order?._id}`);
-          }
-        })
-       } 
-    catch (err) {
-      console.log(err);
-    }
+    })
   };
 
   return {
@@ -315,7 +243,6 @@ const useCheckoutSubmit = () => {
     errors,
     cardError,
     submitHandler,
-    stripe,
     handleSubmit,
     clientSecret,
     setClientSecret,

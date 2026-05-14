@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLoggedOut } from '@/redux/features/auth/authSlice';
 import Image from 'next/image';
 import logo from '@assets/img/logo/logo.svg';
 
@@ -21,7 +23,31 @@ export const AdminSearchContext = React.createContext('');
 
 const AdminLayout = ({ children, title }) => {
   const router = useRouter();
+  const { user } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = React.useState('');
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    if (user) {
+      const isAdmin = user.role?.toLowerCase() === 'admin';
+      if (!isAdmin) {
+        router.push('/');
+      }
+    } else {
+      router.push('/login?redirect=' + router.asPath);
+    }
+  }, [user, router]);
+
+  const isAdmin = user?.role?.toLowerCase() === 'admin';
+
+  if (!user || !isAdmin) {
+    return null;
+  }
+
+  const handleLogout = () => {
+    dispatch(userLoggedOut());
+    router.push('/login');
+  }
 
   const navItems = [
     { title: 'Tổng quan', link: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
@@ -54,7 +80,11 @@ const AdminLayout = ({ children, title }) => {
           ))}
         </nav>
         <div className="admin-nav-footer" style={{ padding: '0 2rem' }}>
-          <button className="admin-btn admin-btn-danger" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          <button 
+            onClick={handleLogout}
+            className="admin-btn admin-btn-danger" 
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+          >
             <LogOut size={18} /> <span className="admin-nav-text">Đăng xuất</span>
           </button>
         </div>

@@ -6,7 +6,23 @@ import Wrapper from '@/layout/wrapper';
 import CommonBreadcrumb from '@/components/breadcrumb/common-breadcrumb';
 import LoginArea from '@/components/login-register/login-area';
 
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+
 const LoginPage = () => {
+  const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
+  const { redirect } = router.query;
+
+  useEffect(() => {
+    if (user) {
+      router.push(redirect || '/');
+    }
+  }, [user, router, redirect]);
+
+  if (user) return null;
+
   return (
     <Wrapper>
       <SEO pageTitle="Đăng nhập" />
