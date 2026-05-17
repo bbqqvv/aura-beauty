@@ -16,7 +16,7 @@ const schema = Yup.object().shape({
   comment: Yup.string().required().label("Comment"),
 });
 
-const ReviewForm = ({product_id}) => {
+const ReviewForm = ({product_id, onSuccess}) => {
   const { user } = useSelector((state) => state.auth);
   const [rating, setRating] = useState(0);
   const [addReview, {}] = useAddReviewMutation();
@@ -47,6 +47,9 @@ const ReviewForm = ({product_id}) => {
           notifyError(result?.error?.data?.message || "Có lỗi xảy ra");
         } else {
           notifySuccess(result?.data?.message || "Thành công");
+          if (onSuccess) {
+            onSuccess();
+          }
         }
       });
     }

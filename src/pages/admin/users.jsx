@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
-import { Edit, Trash2, Plus, Mail, Phone, X, Save } from 'lucide-react';
+import { Edit, Trash2, Plus, Mail, Phone, X, Save, History, Clock, Truck, CheckCircle } from 'lucide-react';
 import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useAddUserMutation } from '@/redux/features/userApi';
+import { useGetAllOrdersQuery } from '@/redux/features/order/orderApi';
 import Loader from '@/components/loader/loader';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -65,6 +66,12 @@ const AdminUsers = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', role: 'user', password: '' });
+  const [selectedHistoryUserId, setSelectedHistoryUserId] = useState(null);
+
+  const { data: historyData, isLoading: historyLoading } = useGetAllOrdersQuery(
+    { limit: 100, searchTerm: selectedHistoryUserId },
+    { skip: !selectedHistoryUserId }
+  );
 
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
@@ -179,6 +186,9 @@ const AdminUsers = () => {
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => setSelectedHistoryUserId(user._id)} className="admin-btn" style={{ padding: '0.4rem', background: 'rgba(49, 183, 87, 0.1)', color: 'var(--admin-success)' }} title="Lịch sử mua hàng">
+                        <History size={16} />
+                      </button>
                       <button onClick={() => openEditModal(user)} className="admin-btn" style={{ padding: '0.4rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)' }} title="Chỉnh sửa">
                         <Edit size={16} />
                       </button>
@@ -253,6 +263,50 @@ const AdminUsers = () => {
                 <Save size={18} /> {isEditMode ? 'Cập nhật Người dùng' : 'Tạo Người dùng'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {selectedHistoryUserId && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div className="glass-panel" style={{ background: '#fff', padding: '2rem', width: '100%', maxWidth: '800px', borderRadius: '12px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--admin-border)', paddingBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Lịch sử mua hàng</h3>
+              <button onClick={() => setSelectedHistoryUserId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-sub)' }}><X size={24} /></button>
+            </div>
+            
+            {historyLoading ? (
+              <div className="text-center p-4"><Loader loading={true} /></div>
+            ) : historyData?.data?.length > 0 ? (
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Mã Đơn</th>
+                    <th>Ngày đặt</th>
+                    <th>Số sản phẩm</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {historyData.data.map(order => (
+                    <tr key={order._id}>
+                      <td style={{ fontWeight: 500 }}>{order._id.slice(-6).toUpperCase()}</td>
+                      <td style={{ color: 'var(--admin-text-sub)' }}>{dayjs(order.createdAt).format('MMM D, YYYY')}</td>
+                      <td>{order.cart?.length || 0}</td>
+                      <td style={{ fontWeight: 500 }}>${order.totalAmount}</td>
+                      <td>
+                        <span className={`admin-badge ${order.status === 'delivered' ? 'admin-badge-success' : order.status === 'cancel' ? 'admin-badge-danger' : 'admin-badge-warning'}`}>
+                          {order.status === 'pending' ? 'Chờ xử lý' : order.status === 'processing' ? 'Đang xử lý' : order.status === 'delivered' ? 'Đã giao' : order.status === 'cancel' ? 'Đã hủy' : order.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center p-4 text-muted">Khách hàng chưa có đơn hàng nào</div>
+            )}
           </div>
         </div>
       )}

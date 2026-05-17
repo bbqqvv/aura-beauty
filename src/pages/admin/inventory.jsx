@@ -21,6 +21,8 @@ const AdminInventory = () => {
 
   const [editingId, setEditingId] = useState(null);
   const [addedQuantity, setAddedQuantity] = useState(0);
+  const [exportingId, setExportingId] = useState(null);
+  const [exportedQuantity, setExportedQuantity] = useState(0);
 
   const filteredProducts = products?.data?.filter(p => 
     p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -42,6 +44,31 @@ const AdminInventory = () => {
       notifySuccess(`Đã nhập thêm ${added} sản phẩm vào kho!`);
       setEditingId(null);
       setAddedQuantity(0);
+      refetch();
+    } catch (err) {
+      notifyError("Cập nhật thất bại");
+    }
+  };
+
+  const handleExportStock = async (product) => {
+    const subtracted = Number(exportedQuantity);
+    if (isNaN(subtracted) || subtracted < 0) {
+      notifyError("Vui lòng nhập số lượng hợp lệ (>= 0)");
+      return;
+    }
+    if (subtracted > product.quantity) {
+      notifyError("Số lượng xuất không được lớn hơn tồn kho");
+      return;
+    }
+
+    try {
+      await updateProduct({ 
+        id: product._id, 
+        data: { ...product, quantity: product.quantity - subtracted } 
+      }).unwrap();
+      notifySuccess(`Đã xuất ${subtracted} sản phẩm khỏi kho!`);
+      setExportingId(null);
+      setExportedQuantity(0);
       refetch();
     } catch (err) {
       notifyError("Cập nhật thất bại");
@@ -96,7 +123,7 @@ const AdminInventory = () => {
                 <th>SKU</th>
                 <th>Giá bán</th>
                 <th>Hiện có</th>
-                <th>Nhập thêm</th>
+                <th>Thao tác Kho</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
               </tr>
@@ -105,6 +132,7 @@ const AdminInventory = () => {
               {filteredProducts.map((product) => {
                 const status = getStockStatus(product.quantity);
                 const isEditing = editingId === product._id;
+                const isExporting = exportingId === product._id;
                 return (
                   <tr key={product._id} style={{ background: isEditing ? 'rgba(9, 137, 255, 0.02)' : 'transparent' }}>
                     <td>
@@ -122,6 +150,11 @@ const AdminInventory = () => {
                            → {product.quantity + (Number(addedQuantity) || 0)}
                         </span>
                       )}
+                      {isExporting && (
+                        <span style={{ color: 'var(--admin-danger)', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
+                           → {product.quantity - (Number(exportedQuantity) || 0)}
+                        </span>
+                      )}
                     </td>
                     <td>
                       {isEditing ? (
@@ -133,6 +166,19 @@ const AdminInventory = () => {
                             value={addedQuantity} 
                             onChange={(e) => setAddedQuantity(e.target.value)}
                             style={{ width: '60px', padding: '0.2rem 0.4rem', borderRadius: '4px', border: '1px solid var(--admin-success)', outline: 'none' }}
+                            autoFocus
+                          />
+                        </div>
+                      ) : isExporting ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <span style={{ color: 'var(--admin-danger)', fontWeight: 'bold' }}>-</span>
+                          <input 
+                            type="number" 
+                            min="0"
+                            max={product.quantity}
+                            value={exportedQuantity} 
+                            onChange={(e) => setExportedQuantity(e.target.value)}
+                            style={{ width: '60px', padding: '0.2rem 0.4rem', borderRadius: '4px', border: '1px solid var(--admin-danger)', outline: 'none' }}
                             autoFocus
                           />
                         </div>
@@ -155,14 +201,32 @@ const AdminInventory = () => {
                             <X size={16} />
                           </button>
                         </div>
+                      ) : isExporting ? (
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button onClick={() => handleExportStock(product)} className="admin-btn" style={{ padding: '0.4rem', background: 'var(--admin-danger)', color: 'white' }} title="Xác nhận xuất kho">
+                            <Save size={16} />
+                          </button>
+                          <button onClick={() => setExportingId(null)} className="admin-btn" style={{ padding: '0.4rem', background: 'var(--admin-text-sub)', color: 'white' }}>
+                            <X size={16} />
+                          </button>
+                        </div>
                       ) : (
-                        <button 
-                          onClick={() => { setEditingId(product._id); setAddedQuantity(0); }} 
-                          className="admin-btn" 
-                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)', fontWeight: 500 }}
-                        >
-                          Nhập thêm
-                        </button>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button 
+                            onClick={() => { setEditingId(product._id); setExportingId(null); setAddedQuantity(0); }} 
+                            className="admin-btn" 
+                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)', fontWeight: 500 }}
+                          >
+                            Nhập
+                          </button>
+                          <button 
+                            onClick={() => { setExportingId(product._id); setEditingId(null); setExportedQuantity(0); }} 
+                            className="admin-btn" 
+                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'rgba(253, 75, 107, 0.1)', color: 'var(--admin-danger)', fontWeight: 500 }}
+                          >
+                            Xuất
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>

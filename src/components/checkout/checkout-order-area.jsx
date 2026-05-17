@@ -114,34 +114,19 @@ const CheckoutOrderArea = ({ checkoutData }) => {
             {...register(`payment`, {
               required: `Vui lòng chọn phương thức thanh toán!`,
             })}
-            onClick={() => setShowCard(false)}
-            type="radio"
-            id="sepay"
-            name="payment"
-            value="SEPay"
-          />
-          <label htmlFor="sepay">Thanh toán tự động qua SEPay</label>
-          <ErrorMsg msg={errors?.payment?.message} />
-        </div>
-        
-        <div className="tp-checkout-payment-item">
-          <input
-            {...register(`payment`, {
-              required: `Vui lòng chọn phương thức thanh toán!`,
-            })}
             onClick={() => setShowCard(true)}
             type="radio"
-            id="qr_payment"
+            id="vietqr"
             name="payment"
-            value="QR"
+            value="VietQR"
           />
-          <label htmlFor="qr_payment">Chuyển khoản qua mã QR</label>
+          <label htmlFor="vietqr">VietQR</label>
           {showCard && (
             <div className="direct-bank-transfer mt-2 p-3 border rounded text-center">
-               <p className="mb-2" style={{ fontSize: '14px' }}>Quét mã QR dưới đây để thanh toán:</p>
+               <p className="mb-2" style={{ fontSize: '14px' }}>Quét mã VietQR dưới đây để thanh toán:</p>
                <img 
                  src={`https://img.vietqr.io/image/MB-123456789-compact2.png?amount=${cartTotal}&addInfo=AuraOrder&accountName=AURA%20BEAUTY`} 
-                 alt="QR Code" 
+                 alt="VietQR Code" 
                  style={{ maxWidth: '200px', margin: '10px auto' }} 
                />
                <div className="text-start mt-2" style={{ fontSize: '13px' }}>

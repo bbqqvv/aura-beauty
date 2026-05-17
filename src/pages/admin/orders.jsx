@@ -134,10 +134,14 @@ const AdminOrders = () => {
                       display: 'inline-flex', 
                       alignItems: 'center', 
                       gap: '0.25rem',
-                      color: getStatusColor(order.status),
-                      background: getStatusBgColor(order.status)
+                      color: order.status?.toLowerCase() === 'cancel' ? 'var(--admin-danger)' : getStatusColor(order.status),
+                      background: order.status?.toLowerCase() === 'cancel' ? 'rgba(253, 75, 107, 0.1)' : getStatusBgColor(order.status)
                     }}>
-                      {getStatusIcon(order.status)} {order.status?.toLowerCase() === 'pending' ? 'Chờ xử lý' : order.status?.toLowerCase() === 'processing' ? 'Đang xử lý' : order.status?.toLowerCase() === 'delivered' ? 'Đã giao' : order.status}
+                      {order.status?.toLowerCase() === 'cancel' ? <X size={16} /> : getStatusIcon(order.status)} 
+                      {order.status?.toLowerCase() === 'pending' ? 'Chờ xử lý' : 
+                       order.status?.toLowerCase() === 'processing' ? 'Đang xử lý' : 
+                       order.status?.toLowerCase() === 'delivered' ? 'Đã giao' : 
+                       order.status?.toLowerCase() === 'cancel' ? 'Đã hủy' : order.status}
                     </span>
                   </td>
                   <td>
@@ -146,14 +150,24 @@ const AdminOrders = () => {
                         <Eye size={16} />
                       </button>
                       {order.status?.toLowerCase() === 'pending' && (
-                        <button onClick={() => updateStatus(order._id, 'processing')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-accent)', color: 'white', borderRadius: '4px' }}>
-                          Xử lý
-                        </button>
+                        <>
+                          <button onClick={() => updateStatus(order._id, 'processing')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-accent)', color: 'white', borderRadius: '4px' }}>
+                            Xử lý
+                          </button>
+                          <button onClick={() => window.confirm('Bạn có chắc muốn hủy đơn hàng này?') && updateStatus(order._id, 'cancel')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-danger)', color: 'white', borderRadius: '4px' }}>
+                            Hủy
+                          </button>
+                        </>
                       )}
                       {order.status?.toLowerCase() === 'processing' && (
-                        <button onClick={() => updateStatus(order._id, 'delivered')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-success)', color: 'white', borderRadius: '4px' }}>
-                          Đã giao
-                        </button>
+                        <>
+                          <button onClick={() => updateStatus(order._id, 'delivered')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-success)', color: 'white', borderRadius: '4px' }}>
+                            Đã giao
+                          </button>
+                          <button onClick={() => window.confirm('Bạn có chắc muốn hủy đơn hàng này?') && updateStatus(order._id, 'cancel')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-danger)', color: 'white', borderRadius: '4px' }}>
+                            Hủy
+                          </button>
+                        </>
                       )}
                     </div>
                   </td>

@@ -18,7 +18,8 @@ import {
   Search,
   Tag,
   ClipboardList,
-  FileText
+  FileText,
+  Star
 } from 'lucide-react';
 
 export const adminSearchEvent = typeof window !== 'undefined' ? new EventTarget() : null;
@@ -67,6 +68,7 @@ const AdminLayout = ({ children, title }) => {
     { title: 'Khách hàng', link: '/admin/users', icon: <Users size={20} /> },
     { title: 'Khuyến mãi', link: '/admin/coupons', icon: <Ticket size={20} /> },
     { title: 'Bài viết (Blog)', link: '/admin/blogs', icon: <FileText size={20} /> },
+    { title: 'Đánh giá', link: '/admin/reviews', icon: <Star size={20} /> },
   ];
 
   return (
@@ -101,38 +103,63 @@ const AdminLayout = ({ children, title }) => {
       </aside>
 
       <main className="admin-main">
-        <header className="admin-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <h1 className="admin-page-title">{title}</h1>
+        <header className="admin-header" style={{ padding: '0.75rem 2rem' }}>
+          <div>
+            <h1 className="admin-page-title" style={{ margin: 0, fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--admin-text-main)' }}>{title}</h1>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <div className="admin-search" style={{ position: 'relative' }}>
-              <Search size={16} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-sub)' }} />
+              <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
               <input 
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={`Tìm kiếm trong ${title}...`} 
                 style={{ 
-                  padding: '0 0.8rem 0 2.2rem', 
+                  padding: '0 1rem 0 2.75rem', 
                   fontSize: '0.85rem',
-                  height: '34px',
-                  borderRadius: '6px', 
+                  height: '40px',
+                  borderRadius: '20px', 
                   border: '1px solid var(--admin-border)', 
-                  background: 'var(--admin-bg)',
+                  background: '#f8fafc',
                   outline: 'none',
-                  width: '240px',
-                  transition: 'all 0.2s'
-                }} 
+                  width: '300px',
+                  transition: 'all 0.3s ease',
+                  color: 'var(--admin-text-main)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.background = '#ffffff';
+                  e.target.style.borderColor = 'var(--admin-accent)';
+                  e.target.style.boxShadow = '0 0 0 4px rgba(9, 137, 255, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.background = '#f8fafc';
+                  e.target.style.borderColor = 'var(--admin-border)';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
-          </div>
-          <div className="admin-header-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ color: 'var(--admin-text-sub)', cursor: 'pointer', position: 'relative' }}>
-              <Bell size={22} />
-              <span style={{ position: 'absolute', top: -2, right: -2, background: 'var(--admin-danger)', width: 8, height: 8, borderRadius: '50%' }}></span>
-            </div>
-            <div className="admin-user-info" style={{ borderLeft: '1px solid var(--admin-border)', paddingLeft: '1.5rem' }}>
-              <span style={{ fontWeight: 500 }}>Quản trị viên</span>
-              <img src="https://i.ibb.co/wpjNftS/user-2.jpg" alt="Admin" style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '0.8rem' }} />
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button 
+                style={{ background: '#f8fafc', border: '1px solid var(--admin-border)', color: 'var(--admin-text-sub)', cursor: 'pointer', position: 'relative', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s ease' }} 
+                onMouseOver={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = 'var(--admin-accent)'; }} 
+                onMouseOut={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = 'var(--admin-text-sub)'; }}
+              >
+                <Bell size={18} />
+                <span style={{ position: 'absolute', top: 8, right: 8, background: 'var(--admin-danger)', border: '2px solid #fff', width: 10, height: 10, borderRadius: '50%' }}></span>
+              </button>
+              
+              <div style={{ height: '24px', width: '1px', background: 'var(--admin-border)', margin: '0 0.25rem' }}></div>
+              
+              <div className="admin-user-info" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.35rem 0.5rem 0.35rem 1rem', borderRadius: '30px', transition: 'background 0.2s', border: '1px solid transparent' }} onMouseOver={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = 'var(--admin-border)'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--admin-text-main)', lineHeight: '1.2' }}>Quản trị viên</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-sub)' }}>Admin Aura</span>
+                </div>
+                <img src="https://i.ibb.co/wpjNftS/user-2.jpg" alt="Admin" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }} />
+              </div>
             </div>
           </div>
         </header>

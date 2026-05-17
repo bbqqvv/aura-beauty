@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
 import ReactToPrint from "react-to-print";
@@ -12,11 +12,13 @@ import logo from "@assets/img/logo/logo.svg";
 import ErrorMsg from "@/components/common/error-msg";
 import { useGetUserOrderByIdQuery } from "@/redux/features/order/orderApi";
 import PrdDetailsLoader from "@/components/loader/prd-details-loader";
+import ReviewForm from "@/components/forms/review-form";
 
 
 const SingleOrder = ({ params }) => {
   const orderId = params.id;
   const printRef = useRef();
+  const [reviewProductId, setReviewProductId] = useState(null);
   const { data: order, isError, isLoading } = useGetUserOrderByIdQuery(orderId);
   let content = null;
   if (isLoading) {
@@ -26,7 +28,7 @@ const SingleOrder = ({ params }) => {
     content = <ErrorMsg msg="There was an error" />;
   }
   if (!isLoading && !isError) {
-    const { name, country, city, contact, invoice, createdAt, cart, shippingCost, discount, totalAmount,paymentMethod} = order.order;
+    const { name, country, city, contact, invoice, createdAt, cart, shippingCost, discount, totalAmount,paymentMethod, status} = order.order;
     content = (
       <>
         <section className="invoice__area pt-120 pb-120">
@@ -93,6 +95,7 @@ const SingleOrder = ({ params }) => {
                       <th scope="col">Quantity</th>
                       <th scope="col">Item Price</th>
                       <th scope="col">Amount</th>
+                      {status?.toLowerCase() === 'delivered' && <th scope="col">Action</th>}
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
@@ -103,6 +106,11 @@ const SingleOrder = ({ params }) => {
                         <td>{item.orderQuantity}</td>
                         <td>${item.price}</td>
                         <td>${item.price * item.orderQuantity}</td>
+                        {status?.toLowerCase() === 'delivered' && (
+                          <td>
+                            <button onClick={() => setReviewProductId(item._id)} className="tp-btn tp-btn-black" style={{padding: '5px 15px', fontSize: '14px'}}>Đánh giá</button>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -162,6 +170,18 @@ const SingleOrder = ({ params }) => {
               </div>
             </div>
           </div>
+          
+          {reviewProductId && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+              <div style={{ background: '#fff', padding: '2rem', width: '100%', maxWidth: '600px', borderRadius: '12px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #eaeaea', paddingBottom: '1rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 600, margin: 0 }}>Đánh giá sản phẩm</h3>
+                  <button onClick={() => setReviewProductId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', lineHeight: 1 }}>&times;</button>
+                </div>
+                <ReviewForm product_id={reviewProductId} onSuccess={() => setReviewProductId(null)} />
+              </div>
+            </div>
+          )}
         </section>
       </>
 

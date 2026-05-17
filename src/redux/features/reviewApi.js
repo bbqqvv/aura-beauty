@@ -11,7 +11,18 @@ export const reviewApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => ["Products",{ type: "Product", id: arg.productId }],
     }),
+    getAllReviews: builder.query({
+      query: () => `/api/review/all`,
+      providesTags: ["Reviews"],
+    }),
+    deleteReview: builder.mutation({
+      query: (id) => ({
+        url: `/api/review/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Reviews", "Products"],
+    }),
   }),
 });
 
-export const {useAddReviewMutation} = reviewApi;
+export const {useAddReviewMutation, useGetAllReviewsQuery, useDeleteReviewMutation} = reviewApi;
