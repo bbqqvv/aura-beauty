@@ -2,8 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 // internal
+import PaymentOption from '@/ui/payment-option';
 import logo from '@assets/img/logo/logo.svg';
-import pay from '@assets/img/footer/footer-pay.png';
 import social_data from '@/data/social-data';
 import { Email, Location } from '@/svg';
 
@@ -112,9 +112,9 @@ const Footer = ({ style_2 = false, style_3 = false,primary_style=false }) => {
                 </div>
                 <div className="col-md-6">
                   <div className="tp-footer-payment text-md-end">
-                    <p>
-                      <Image src={pay} alt="pay" />
-                    </p>
+                    <div className="d-flex justify-content-md-end justify-content-center">
+                      <PaymentOption />
+                    </div>
                   </div>
                 </div>
               </div>

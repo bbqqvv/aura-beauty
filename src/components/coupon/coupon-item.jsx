@@ -65,9 +65,15 @@ const CouponItem = ({ coupon, handleCopied, copiedCode, copied }) => {
             </span>
             <div className="tp-coupon-info-tooltip transition-3">
               <p>
-                *This coupon code will apply on{" "}
-                <span>Grocery type products</span> and when you shopping more
-                than <span>${coupon.minimumAmount}</span>
+                *Mã giảm giá này áp dụng cho{" "}
+                <span>
+                  {coupon.productType === "beauty" 
+                    ? "Tất cả sản phẩm mỹ phẩm" 
+                    : coupon.productType === "specific" 
+                    ? "Sản phẩm cụ thể được chọn" 
+                    : "Sản phẩm được chỉ định"}
+                </span>{" "}
+                với đơn hàng tối thiểu từ <span>${coupon.minimumAmount}</span>.
               </p>
             </div>
           </div>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import social_data from '@/data/social-data';
 import { Email, Location } from '@/svg';
 import logo from '@assets/img/logo/logo.svg';
-import pay from '@assets/img/footer/footer-pay.png';
+import PaymentOption from '@/ui/payment-option';
 
 const FooterTwo = () => {
   return (
@@ -123,9 +123,9 @@ const FooterTwo = () => {
                   </div>
                   <div className="col-md-6">
                     <div className="tp-footer-payment text-md-end">
-                      <p>
-                        <Image src={pay} alt="pay" />
-                      </p>
+                      <div className="d-flex justify-content-md-end justify-content-center">
+                        <PaymentOption />
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -5,7 +5,7 @@ export const couponApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllCoupons: builder.query({
       query: () => `/api/coupon`,
-      providesTags: ['Coupons']
+      providesTags: ['Coupon']
     }),
     addCoupon: builder.mutation({
       query: (data) => ({
@@ -13,7 +13,7 @@ export const couponApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['Coupons'],
+      invalidatesTags: ['Coupon'],
     }),
     updateCoupon: builder.mutation({
       query: ({ id, data }) => ({
@@ -21,14 +21,14 @@ export const couponApi = apiSlice.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: ['Coupons'],
+      invalidatesTags: ['Coupon'],
     }),
     deleteCoupon: builder.mutation({
       query: (id) => ({
         url: `/api/coupon/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Coupons'],
+      invalidatesTags: ['Coupon'],
     }),
   }),
 });

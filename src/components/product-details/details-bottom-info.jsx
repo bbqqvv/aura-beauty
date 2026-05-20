@@ -1,6 +1,5 @@
 import React from "react";
-import Image from "next/image";
-import payment_option_img from '@assets/img/product/icons/payment-option.png';
+import PaymentOption from "@/ui/payment-option";
 
 const DetailsBottomInfo = ({sku,category,tag}) => {
   return (
@@ -50,9 +49,9 @@ const DetailsBottomInfo = ({sku,category,tag}) => {
       {/* product-details-payment */}
       <div className="tp-product-details-payment d-flex align-items-center flex-wrap justify-content-between">
         <p>
-          Guaranteed safe <br /> & secure checkout
+          Hỗ trợ thanh toán <br /> linh hoạt & an toàn
         </p>
-        <Image src={payment_option_img} alt="payment_option_img" />
+        <PaymentOption />
       </div>
     </>
   );

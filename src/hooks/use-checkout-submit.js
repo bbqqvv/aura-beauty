@@ -78,14 +78,33 @@ const useCheckoutSubmit = () => {
 
   //calculate total and discount value
   useEffect(() => {
-    const result = cart_products?.filter(
-      (p) => p.productType === discountProductType
-    );
-    const discountProductTotal = result?.reduce(
-      (preValue, currentValue) =>
-        preValue + currentValue.price * currentValue.orderQuantity,
-      0
-    );
+    let discountProductTotal = 0;
+    
+    if (discountPercentage > 0) {
+      if (discountProductType === "all") {
+        // Coupon applies to all products in the cart
+        discountProductTotal = cart_products?.reduce(
+          (preValue, currentValue) => preValue + currentValue.price * currentValue.orderQuantity,
+          0
+        ) || 0;
+      } else if (couponInfo?.productIds && couponInfo.productIds.length > 0) {
+        // Coupon applies ONLY to specific products in the list
+        const targetIds = new Set(couponInfo.productIds);
+        const result = cart_products?.filter((p) => targetIds.has(p._id));
+        discountProductTotal = result?.reduce(
+          (preValue, currentValue) => preValue + currentValue.price * currentValue.orderQuantity,
+          0
+        ) || 0;
+      } else {
+        // Coupon applies to a specific productType (default)
+        const result = cart_products?.filter((p) => p.productType === discountProductType);
+        discountProductTotal = result?.reduce(
+          (preValue, currentValue) => preValue + currentValue.price * currentValue.orderQuantity,
+          0
+        ) || 0;
+      }
+    }
+
     let totalValue = "";
     let subTotal = Number((total + shippingCost).toFixed(2));
     let discountTotal = Number(
@@ -100,8 +119,7 @@ const useCheckoutSubmit = () => {
     discountPercentage,
     cart_products,
     discountProductType,
-    discountAmount,
-    cartTotal,
+    couponInfo,
   ]);
 
   // create payment intent
@@ -147,23 +165,35 @@ const useCheckoutSubmit = () => {
       return;
     }
 
+    if (result[0]?.limit > 0 && result[0]?.usageCount >= result[0]?.limit) {
+      notifyError("Mã giảm giá này đã hết lượt sử dụng!");
+      return;
+    }
+
     if (total < result[0]?.minimumAmount) {
       notifyError(
         `Minimum ${result[0].minimumAmount} USD required for Apply this coupon!`
       );
       return;
     } else {
-      // notifySuccess(
-      //   `Your Coupon ${result[0].title} is Applied on ${result[0].productType}!`
-      // );
-      setCouponApplyMsg(`Your Coupon ${result[0].title} is Applied on ${result[0].productType} productType!`)
+      let applyMsg = `Mã ${result[0].title} đã được áp dụng!`;
+      if (result[0].productType === "all") {
+        applyMsg = `Mã ${result[0].title} giảm giá cho tất cả sản phẩm!`;
+      } else if (result[0].productIds && result[0].productIds.length > 0) {
+        applyMsg = `Mã ${result[0].title} giảm giá cho các sản phẩm được chỉ định!`;
+      } else {
+        applyMsg = `Mã ${result[0].title} giảm giá cho sản phẩm nhóm ${result[0].productType}!`;
+      }
+      setCouponApplyMsg(applyMsg);
       setMinimumAmount(result[0]?.minimumAmount);
       setDiscountProductType(result[0].productType);
       setDiscountPercentage(result[0].discountPercentage);
+      setCouponInfo(result[0]);
+      localStorage.setItem("couponInfo", JSON.stringify(result[0]));
       dispatch(set_coupon(result[0]));
       setTimeout(() => {
         couponRef.current.value = "";
-        setCouponApplyMsg("")
+        setCouponApplyMsg("");
       }, 5000);
     }
   };
@@ -209,6 +239,7 @@ const useCheckoutSubmit = () => {
       totalAmount: cartTotal,
       orderNote:data.orderNote,
       user: `${user?._id}`,
+      couponCode: couponInfo?.couponCode || "",
     };
 
     saveOrder({

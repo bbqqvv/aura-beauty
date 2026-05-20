@@ -3,9 +3,79 @@ import AdminLayout, { adminSearchEvent } from '@/layout/admin-layout';
 import SEO from '@/components/seo';
 import { Edit, Trash2, Plus, Percent, X, Save, Image as ImageIcon } from 'lucide-react';
 import { useGetAllCouponsQuery, useDeleteCouponMutation, useAddCouponMutation, useUpdateCouponMutation } from '@/redux/features/couponApi';
+import { useGetAllProductsQuery } from '@/redux/features/productApi';
 import Loader from '@/components/loader/loader';
 import dayjs from 'dayjs';
 import { notifySuccess } from '@/utils/toast';
+
+const LiveCountdown = ({ endTime, status }) => {
+  const [timeLeft, setTimeLeft] = useState('');
+
+  useEffect(() => {
+    if (status !== 'active') {
+      setTimeLeft('Không hoạt động');
+      return;
+    }
+
+    const calculateTime = () => {
+      const now = new Date().getTime();
+      const end = new Date(endTime).getTime();
+      const distance = end - now;
+
+      if (distance < 0) {
+        setTimeLeft('Đã hết hạn');
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      let parts = [];
+      if (days > 0) parts.push(`${days} ngày`);
+      
+      const pad = (num) => String(num).padStart(2, '0');
+      parts.push(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
+
+      setTimeLeft(parts.join(' '));
+    };
+
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [endTime, status]);
+
+  const isExpired = new Date() > new Date(endTime) || status !== 'active';
+
+  return (
+    <span 
+      style={{ 
+        fontWeight: 600, 
+        fontFamily: 'monospace', 
+        fontSize: '0.9rem', 
+        color: isExpired ? 'var(--admin-text-sub)' : '#10b981',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px'
+      }}
+    >
+      {!isExpired && (
+        <span 
+          style={{ 
+            display: 'inline-block', 
+            width: '6px', 
+            height: '6px', 
+            borderRadius: '50%', 
+            background: '#10b981', 
+            boxShadow: '0 0 8px #10b981'
+          }} 
+        />
+      )}
+      {timeLeft}
+    </span>
+  );
+};
 
 const AdminCoupons = () => {
   const [deleteCoupon] = useDeleteCouponMutation();
@@ -29,6 +99,14 @@ const AdminCoupons = () => {
     coupon.couponCode?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const activeBeautyCoupon = filteredCoupons
+    .filter(c => c.status === 'active' && c.productType === 'beauty' && new Date(c.endTime) > new Date())
+    .sort((a, b) => b.discountPercentage - a.discountPercentage || new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+  const { data: productsData } = useGetAllProductsQuery({ limit: 100 });
+  const allProductsList = productsData?.data || [];
+  const [productSearch, setProductSearch] = useState('');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState(null);
   
@@ -39,7 +117,11 @@ const AdminCoupons = () => {
     discountPercentage: 0,
     minimumAmount: 0,
     endTime: dayjs().add(1, 'month').format('YYYY-MM-DDTHH:mm'),
-    status: 'active'
+    status: 'active',
+    productType: 'beauty',
+    productIds: [],
+    limit: 0,
+    usageCount: 0
   };
 
   const [formData, setFormData] = useState(initialForm);
@@ -79,12 +161,17 @@ const AdminCoupons = () => {
         discountPercentage: coupon.discountPercentage || 0,
         minimumAmount: coupon.minimumAmount || 0,
         endTime: dayjs(coupon.endTime).format('YYYY-MM-DDTHH:mm'),
-        status: coupon.status || 'active'
+        status: coupon.status || 'active',
+        productType: coupon.productType || 'beauty',
+        productIds: coupon.productIds || [],
+        limit: coupon.limit || 0,
+        usageCount: coupon.usageCount || 0
       });
     } else {
       setEditingCoupon(null);
       setFormData(initialForm);
     }
+    setProductSearch('');
     setIsModalOpen(true);
   };
 
@@ -97,9 +184,9 @@ const AdminCoupons = () => {
     if (!formData.title || !formData.couponCode) return alert("Tiêu đề và Mã khuyến mãi không được bỏ trống");
     try {
       if (editingCoupon) {
-        await updateCoupon({ id: editingCoupon._id, data: { ...formData, productType: 'beauty' } }).unwrap();
+        await updateCoupon({ id: editingCoupon._id, data: formData }).unwrap();
       } else {
-        await addCoupon({ ...formData, productType: 'beauty' }).unwrap();
+        await addCoupon(formData).unwrap();
       }
       refetch();
       handleCloseModal();
@@ -145,41 +232,79 @@ const AdminCoupons = () => {
                 <th>Giảm giá</th>
                 <th>Đơn tối thiểu</th>
                 <th>Ngày hết hạn</th>
+                <th>Lượt dùng</th>
+                <th>Đếm ngược (Live)</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCoupons.map((coupon) => (
-                <tr key={coupon._id}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-                      <div style={{ padding: '0.4rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)', borderRadius: '4px' }}>
-                        <Percent size={14} />
+              {filteredCoupons.map((coupon) => {
+                const isActiveBanner = activeBeautyCoupon && activeBeautyCoupon._id === coupon._id;
+                return (
+                  <tr key={coupon._id}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                        <div style={{ padding: '0.4rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)', borderRadius: '4px' }}>
+                          <Percent size={14} />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ display: 'flex', alignItems: 'center' }}>
+                            {coupon.couponCode}
+                            {isActiveBanner && (
+                              <span 
+                                style={{ 
+                                  fontSize: '0.7rem', 
+                                  background: 'rgba(16, 185, 129, 0.1)', 
+                                  color: '#10b981', 
+                                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                                  padding: '1px 5px', 
+                                  borderRadius: '20px', 
+                                  marginLeft: '8px',
+                                  fontWeight: 500
+                                }}
+                              >
+                                Đang chạy trang chủ
+                              </span>
+                            )}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-sub)', fontWeight: 400 }}>{coupon.title}</span>
+                        </div>
                       </div>
-                      {coupon.couponCode}
-                    </div>
-                  </td>
-                  <td style={{ fontWeight: 500 }}>{coupon.discountPercentage}%</td>
-                  <td style={{ color: 'var(--admin-text-sub)' }}>${coupon.minimumAmount}</td>
-                  <td style={{ color: 'var(--admin-text-sub)' }}>{dayjs(coupon.endTime).format('MMM DD, YYYY')}</td>
-                  <td>
-                    <span className={`admin-badge ${new Date() < new Date(coupon.endTime) ? 'admin-badge-success' : 'admin-badge-danger'}`}>
-                      {new Date() < new Date(coupon.endTime) ? 'Hoạt động' : 'Hết hạn'}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button onClick={() => handleOpenModal(coupon)} className="admin-btn" style={{ padding: '0.4rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)' }} title="Chỉnh sửa">
-                        <Edit size={16} />
-                      </button>
-                      <button onClick={() => handleDelete(coupon._id)} className="admin-btn" style={{ padding: '0.4rem', background: 'rgba(253, 75, 107, 0.1)', color: 'var(--admin-danger)' }} title="Xóa">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td style={{ fontWeight: 500 }}>{coupon.discountPercentage}%</td>
+                    <td style={{ color: 'var(--admin-text-sub)' }}>${coupon.minimumAmount}</td>
+                    <td style={{ color: 'var(--admin-text-sub)' }}>{dayjs(coupon.endTime).format('MMM DD, YYYY')}</td>
+                    <td style={{ color: 'var(--admin-text-sub)', fontSize: '0.85rem' }}>
+                      {coupon.limit > 0 ? (
+                        <span>
+                          <strong>{coupon.usageCount || 0}</strong> / {coupon.limit}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#10b981', fontWeight: 500 }}>Không giới hạn</span>
+                      )}
+                    </td>
+                    <td>
+                      <LiveCountdown endTime={coupon.endTime} status={coupon.status} />
+                    </td>
+                    <td>
+                      <span className={`admin-badge ${new Date() < new Date(coupon.endTime) && coupon.status === 'active' ? 'admin-badge-success' : 'admin-badge-danger'}`}>
+                        {new Date() < new Date(coupon.endTime) && coupon.status === 'active' ? 'Hoạt động' : 'Hết hạn'}
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={() => handleOpenModal(coupon)} className="admin-btn" style={{ padding: '0.4rem', background: 'rgba(9, 137, 255, 0.1)', color: 'var(--admin-accent)' }} title="Chỉnh sửa">
+                          <Edit size={16} />
+                        </button>
+                        <button onClick={() => handleDelete(coupon._id)} className="admin-btn" style={{ padding: '0.4rem', background: 'rgba(253, 75, 107, 0.1)', color: 'var(--admin-danger)' }} title="Xóa">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -249,13 +374,102 @@ const AdminCoupons = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-12">
+              <div className="col-md-6">
                 <div className="admin-form-group">
                   <label>Ngày hết hạn</label>
                   <input type="datetime-local" className="admin-input-premium" value={formData.endTime} onChange={(e) => setFormData({...formData, endTime: e.target.value})} />
                 </div>
               </div>
+              <div className="col-md-6">
+                <div className="admin-form-group">
+                  <label>Giới hạn số lần sử dụng (0: Không giới hạn)</label>
+                  <input type="number" className="admin-input-premium" value={formData.limit} onChange={(e) => setFormData({...formData, limit: Number(e.target.value)})} placeholder="VD: 100" />
+                </div>
+              </div>
             </div>
+
+            <div className="row">
+              <div className="col-md-12">
+                <div className="admin-form-group">
+                  <label>Phạm vi áp dụng mã giảm giá</label>
+                  <select 
+                    className="admin-input-premium" 
+                    value={formData.productType === 'specific' ? 'specific' : 'beauty'} 
+                    onChange={(e) => {
+                      const newType = e.target.value;
+                      setFormData({
+                        ...formData, 
+                        productType: newType,
+                        productIds: newType === 'specific' ? (formData.productIds || []) : []
+                      });
+                    }}
+                  >
+                    <option value="beauty">Tất cả sản phẩm mỹ phẩm</option>
+                    <option value="specific">Sản phẩm cụ thể được chọn</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {formData.productType === 'specific' && (
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="admin-form-group">
+                    <label style={{ fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Chọn sản phẩm áp dụng</label>
+                    <input 
+                      type="text" 
+                      className="admin-input-premium" 
+                      placeholder="Tìm kiếm sản phẩm..." 
+                      value={productSearch} 
+                      onChange={(e) => setProductSearch(e.target.value)} 
+                      style={{ marginBottom: '0.75rem' }}
+                    />
+                    <div style={{ 
+                      maxHeight: '200px', 
+                      overflowY: 'auto', 
+                      border: '1px solid var(--admin-border)', 
+                      borderRadius: '8px', 
+                      padding: '0.75rem',
+                      background: '#f8fafc'
+                    }}>
+                      {allProductsList.filter(p => p.productType === 'beauty' && p.title.toLowerCase().includes(productSearch.toLowerCase())).map(product => {
+                        const isChecked = formData.productIds?.includes(product._id);
+                        return (
+                          <label key={product._id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                            <input 
+                              type="checkbox" 
+                              checked={isChecked}
+                              onChange={() => {
+                                const currentIds = [...(formData.productIds || [])];
+                                if (isChecked) {
+                                  setFormData({
+                                    ...formData,
+                                    productIds: currentIds.filter(id => id !== product._id)
+                                  });
+                                } else {
+                                  setFormData({
+                                    ...formData,
+                                    productIds: [...currentIds, product._id]
+                                  });
+                                }
+                              }}
+                            />
+                            <img src={product.img} alt="" style={{ width: '24px', height: '24px', objectFit: 'cover', borderRadius: '4px', marginRight: '6px' }} />
+                            <span>{product.title}</span>
+                          </label>
+                        );
+                      })}
+                      {allProductsList.filter(p => p.productType === 'beauty' && p.title.toLowerCase().includes(productSearch.toLowerCase())).length === 0 && (
+                        <div className="text-center text-muted py-3" style={{ fontSize: '0.85rem' }}>Không tìm thấy sản phẩm</div>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-sub)', marginTop: '0.5rem' }}>
+                      Đã chọn {formData.productIds?.length || 0} sản phẩm
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="admin-form-group">
               <label>Logo</label>

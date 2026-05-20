@@ -25,26 +25,28 @@ const CouponArea = () => {
   }
 
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Đã xảy ra lỗi khi tải danh sách mã giảm giá!" />;
   }
 
-  if (!isLoading && !isError && offerCoupons?.length === 0) {
-    content = <ErrorMsg msg="No Coupons found!" />;
-  }
+  if (!isLoading && !isError) {
+    const activeCoupons = (offerCoupons || []).filter(
+      (coupon) => coupon.status === "active" && new Date(coupon.endTime) > new Date()
+    );
 
-  if (!isLoading && !isError && offerCoupons?.length > 0) {
-    const coupon_items = offerCoupons;
-    // const coupon_items = offerCoupons.slice(0, 2);
-    content = coupon_items.map((coupon) => (
-      <div key={coupon._id} className="col-xl-6">
-        <CouponItem
-          coupon={coupon}
-          handleCopied={handleCopied}
-          copied={copied}
-          copiedCode={copiedCode}
-        />
-      </div>
-    ));
+    if (activeCoupons.length === 0) {
+      content = <ErrorMsg msg="Hiện tại không có mã giảm giá nào hoạt động!" />;
+    } else {
+      content = activeCoupons.map((coupon) => (
+        <div key={coupon._id} className="col-xl-6">
+          <CouponItem
+            coupon={coupon}
+            handleCopied={handleCopied}
+            copied={copied}
+            copiedCode={copiedCode}
+          />
+        </div>
+      ));
+    }
   }
   return (
     <>
