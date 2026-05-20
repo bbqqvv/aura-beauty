@@ -1,21 +1,63 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import ProductItem from "./product-item";
 import ErrorMsg from "@/components/common/error-msg";
 import { useGetProductTypeQuery } from "@/redux/features/productApi";
 import { HomeThreePrdTwoLoader } from "@/components/loader";
 
-// tabs
-const tabs = ["Tất cả bộ sưu tập", "Xu hướng", "Làm đẹp", "Mỹ phẩm"];
-
 const ProductAreaTwo = () => {
-  const [activeTab, setActiveTab] = useState(tabs[0]);
   const {
     data: products,
     isError,
     isLoading,
   } = useGetProductTypeQuery({ type: "beauty" });
+  
   const activeRef = useRef(null);
   const marker = useRef(null);
+
+  // Extract top categories dynamically based on actual products data
+  const topCategories = useMemo(() => {
+    if (!products?.data) return [];
+    const categoryCounts = {};
+    products.data.forEach((p) => {
+      const catName = p.category?.name;
+      if (catName) {
+        categoryCounts[catName] = (categoryCounts[catName] || 0) + 1;
+      }
+    });
+    // Sort categories by product count descending, and take the top 2
+    return Object.keys(categoryCounts)
+      .sort((a, b) => categoryCounts[b] - categoryCounts[a])
+      .slice(0, 2);
+  }, [products]);
+
+  // Combine static tabs with dynamic categories
+  const tabs = useMemo(() => {
+    return ["Tất cả bộ sưu tập", "Xu hướng", ...topCategories];
+  }, [topCategories]);
+
+  const [activeTab, setActiveTab] = useState("Tất cả bộ sưu tập");
+
+  // Ensure active tab is reset to a valid tab if the dynamic tabs list updates and current tab becomes invalid
+  useEffect(() => {
+    if (tabs.length > 0 && !tabs.includes(activeTab)) {
+      setActiveTab(tabs[0]);
+    }
+  }, [tabs, activeTab]);
+
+  // Helper to filter and sort products per tab dynamically
+  const getTabProducts = (tabName, allProducts) => {
+    if (!allProducts) return [];
+    if (tabName === "Tất cả bộ sưu tập") {
+      return allProducts;
+    }
+    if (tabName === "Xu hướng") {
+      return allProducts
+        .slice()
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    // Lọc theo danh mục động lấy từ database
+    return allProducts.filter((p) => p.category?.name === tabName);
+  };
 
   // handleActive
   const handleActive = (e, tab) => {
@@ -35,7 +77,7 @@ const ProductAreaTwo = () => {
       marker.current.style.left = activeRef.current.offsetLeft + "px";
       marker.current.style.width = activeRef.current.offsetWidth + "px";
     }
-  }, [activeTab, products]);
+  }, [activeTab, products, tabs]);
 
   // decide what to render
   let content = null;
@@ -50,24 +92,8 @@ const ProductAreaTwo = () => {
     content = <ErrorMsg msg="Không tìm thấy sản phẩm nào!" />;
   }
   if (!isLoading && !isError && products?.data?.length > 0) {
-    let product_items = products.data;
-    if (activeTab === "Tất cả bộ sưu tập") {
-      product_items = products.data;
-    } else if (activeTab === "Xu hướng") {
-      product_items = products.data
-        .slice()
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (activeTab === "Làm đẹp") {
-      product_items = products.data.filter(
-        (p) => p.category.name === "Discover Skincare"
-      );
-    } else if (activeTab === "Mỹ phẩm") {
-      product_items = products.data.filter(
-        (p) => p.category.name === "Awesome Lip Care"
-      );
-    } else {
-      product_items = products.data;
-    }
+    const current_product_items = getTabProducts(activeTab, products.data);
+
     content = (
       <>
         <div className="row align-items-end">
@@ -88,21 +114,24 @@ const ProductAreaTwo = () => {
                     id="nav-tab"
                     role="tablist"
                   >
-                    {tabs.map((tab, i) => (
-                      <button
-                        key={i}
-                        ref={activeTab === tab ? activeRef : null}
-                        onClick={(e) => handleActive(e, tab)}
-                        className={`nav-link text-capitalize ${
-                          activeTab === tab ? "active" : ""
-                        }`}
-                      >
-                        {tab.split("-").join(" ")}
-                        <span className="tp-product-tab-tooltip">
-                          {product_items.length}
-                        </span>
-                      </button>
-                    ))}
+                    {tabs.map((tab, i) => {
+                      const count = getTabProducts(tab, products.data).length;
+                      return (
+                        <button
+                          key={i}
+                          ref={activeTab === tab ? activeRef : null}
+                          onClick={(e) => handleActive(e, tab)}
+                          className={`nav-link text-capitalize ${
+                            activeTab === tab ? "active" : ""
+                          }`}
+                        >
+                          {tab}
+                          <span className="tp-product-tab-tooltip">
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    })}
                     <span
                       ref={marker}
                       id="productTabMarker"
@@ -116,11 +145,16 @@ const ProductAreaTwo = () => {
         </div>
 
         <div className="row">
-          {product_items.map((prd) => (
+          {current_product_items.map((prd) => (
             <div key={prd._id} className="col-lg-3 col-md-4 col-sm-6">
               <ProductItem product={prd} />
             </div>
           ))}
+          {current_product_items.length === 0 && (
+            <div className="col-12 text-center p-5 text-muted">
+              Không có sản phẩm nào trong mục này.
+            </div>
+          )}
         </div>
       </>
     );

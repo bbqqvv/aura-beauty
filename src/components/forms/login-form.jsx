@@ -39,7 +39,18 @@ const LoginForm = ({ redirectUrl }) => {
       .then((data) => {
         if (data?.data) {
           notifySuccess("Đăng nhập thành công");
-          router.push(redirectUrl || redirect || "/");
+          const userRole = data?.data?.data?.user?.role?.toLowerCase() || data?.data?.user?.role?.toLowerCase();
+          const storedRedirect = typeof window !== 'undefined' ? sessionStorage.getItem('redirect_path') : null;
+          
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('redirect_path');
+          }
+          
+          if (userRole === 'admin') {
+            router.push('/admin/dashboard');
+          } else {
+            router.push(redirectUrl || storedRedirect || redirect || "/");
+          }
         }
         else {
           notifyError(data?.error?.data?.error || "Đăng nhập thất bại")

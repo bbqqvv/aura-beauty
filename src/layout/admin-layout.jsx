@@ -19,7 +19,8 @@ import {
   Tag,
   ClipboardList,
   FileText,
-  Star
+  Star,
+  MapPin
 } from 'lucide-react';
 
 export const adminSearchEvent = typeof window !== 'undefined' ? new EventTarget() : null;
@@ -43,7 +44,10 @@ const AdminLayout = ({ children, title }) => {
         router.push('/');
       }
     } else {
-      router.push('/login?redirect=' + router.asPath);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('redirect_path', router.asPath);
+      }
+      router.push('/login');
     }
   }, [user, router]);
 
@@ -58,37 +62,96 @@ const AdminLayout = ({ children, title }) => {
     router.push('/login');
   }
 
-  const navItems = [
-    { title: 'Tổng quan', link: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
-    { title: 'Sản phẩm', link: '/admin/products', icon: <ShoppingBag size={20} /> },
-    { title: 'Thương hiệu', link: '/admin/brands', icon: <Tag size={20} /> },
-    { title: 'Danh mục', link: '/admin/categories', icon: <FolderTree size={20} /> },
-    { title: 'Kho hàng', link: '/admin/inventory', icon: <Package size={20} /> },
-    { title: 'Đơn hàng', link: '/admin/orders', icon: <ClipboardList size={20} /> },
-    { title: 'Khách hàng', link: '/admin/users', icon: <Users size={20} /> },
-    { title: 'Khuyến mãi', link: '/admin/coupons', icon: <Ticket size={20} /> },
-    { title: 'Bài viết (Blog)', link: '/admin/blogs', icon: <FileText size={20} /> },
-    { title: 'Đánh giá', link: '/admin/reviews', icon: <Star size={20} /> },
+  const navGroups = [
+    {
+      title: 'Hệ thống',
+      items: [
+        { title: 'Tổng quan', link: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
+      ]
+    },
+    {
+      title: 'Bán hàng',
+      items: [
+        { title: 'Đơn hàng', link: '/admin/orders', icon: <ClipboardList size={20} /> },
+        { title: 'Khách hàng', link: '/admin/users', icon: <Users size={20} /> },
+      ]
+    },
+    {
+      title: 'Sản phẩm',
+      items: [
+        { title: 'Sản phẩm', link: '/admin/products', icon: <ShoppingBag size={20} /> },
+        { title: 'Danh mục', link: '/admin/categories', icon: <FolderTree size={20} /> },
+        { title: 'Thương hiệu', link: '/admin/brands', icon: <Tag size={20} /> },
+        { title: 'Kho hàng', link: '/admin/inventory', icon: <Package size={20} /> },
+      ]
+    },
+    {
+      title: 'Nội dung',
+      items: [
+        { title: 'Khuyến mãi', link: '/admin/coupons', icon: <Ticket size={20} /> },
+        { title: 'Bài viết (Blog)', link: '/admin/blogs', icon: <FileText size={20} /> },
+        { title: 'Đánh giá', link: '/admin/reviews', icon: <Star size={20} /> },
+        { title: 'Cửa hàng', link: '/admin/stores', icon: <MapPin size={20} /> },
+      ]
+    }
   ];
 
   return (
     <div className="admin-layout">
-      <aside className="admin-sidebar">
-        <div className="admin-logo">
+      <style jsx global>{`
+        .admin-nav-item {
+          border-left: none !important;
+          border-radius: 8px;
+          margin: 0.15rem 0.75rem;
+          padding: 0.6rem 1rem !important;
+          font-weight: 500;
+          transition: all 0.2s ease;
+        }
+        .admin-nav-item:hover {
+          background: #f8fafc !important;
+          color: var(--admin-accent) !important;
+          transform: translateX(4px);
+        }
+        .admin-nav-item.active {
+          background: rgba(9, 137, 255, 0.1) !important;
+          color: var(--admin-accent) !important;
+        }
+        .admin-nav-item.active .admin-nav-icon {
+          color: var(--admin-accent);
+        }
+        /* Ẩn scrollbar xấu xí của thanh điều hướng */
+        .admin-nav::-webkit-scrollbar {
+          width: 0px;
+          background: transparent;
+        }
+        .admin-nav {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+      `}</style>
+      <aside className="admin-sidebar" style={{ borderRight: '1px solid #f1f5f9', boxShadow: '2px 0 10px rgba(0,0,0,0.02)' }}>
+        <div className="admin-logo" style={{ marginBottom: '2rem', marginTop: '0.5rem' }}>
           <Link href="/">
             <Image src={logo} alt="logo" width={120} />
           </Link>
         </div>
-        <nav className="admin-nav">
-          {navItems.map((item) => (
-            <Link 
-              key={item.link} 
-              href={item.link}
-              className={`admin-nav-item ${router.pathname === item.link ? 'active' : ''}`}
-            >
-              <span className="admin-nav-icon">{item.icon}</span> 
-              <span className="admin-nav-text">{item.title}</span>
-            </Link>
+        <nav className="admin-nav" style={{ overflowY: 'auto' }}>
+          {navGroups.map((group, idx) => (
+            <div key={idx} style={{ marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.5rem 1.25rem' }}>
+                {group.title}
+              </div>
+              {group.items.map((item) => (
+                <Link 
+                  key={item.link} 
+                  href={item.link}
+                  className={`admin-nav-item ${router.pathname === item.link ? 'active' : ''}`}
+                >
+                  <span className="admin-nav-icon" style={{ opacity: router.pathname === item.link ? 1 : 0.7 }}>{item.icon}</span> 
+                  <span className="admin-nav-text">{item.title}</span>
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="admin-nav-footer" style={{ padding: '0 2rem' }}>

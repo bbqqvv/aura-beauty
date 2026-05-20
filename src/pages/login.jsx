@@ -17,7 +17,15 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (user) {
-      router.push(redirect || '/');
+      const storedRedirect = typeof window !== 'undefined' ? sessionStorage.getItem('redirect_path') : null;
+      if (storedRedirect) {
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('redirect_path');
+        }
+        router.push(storedRedirect);
+      } else {
+        router.push(redirect || '/');
+      }
     }
   }, [user, router, redirect]);
 

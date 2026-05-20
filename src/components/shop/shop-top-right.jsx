@@ -5,7 +5,7 @@ import { Filter } from "@/svg";
 import NiceSelect from "@/ui/nice-select";
 import {handleFilterSidebarOpen } from "@/redux/features/shop-filter-slice";
 
-const ShopTopRight = ({selectHandleFilter}) => {
+const ShopTopRight = ({selectHandleFilter, isSidebar}) => {
   const dispatch = useDispatch()
   return (
     <div className="tp-shop-top-right d-sm-flex align-items-center justify-content-xl-end">
@@ -23,7 +23,7 @@ const ShopTopRight = ({selectHandleFilter}) => {
           name="Sắp xếp mặc định"
         />
       </div>
-      <div className="tp-shop-top-filter">
+      <div className={`tp-shop-top-filter ${isSidebar ? 'd-lg-none' : ''}`}>
         <button onClick={()=> dispatch(handleFilterSidebarOpen())} type="button" className="tp-filter-btn">
           <span>
             <Filter />

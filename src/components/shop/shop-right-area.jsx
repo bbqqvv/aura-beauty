@@ -53,7 +53,7 @@ const ShopRightArea = ({
                         />
                       </div>
                      <div className="col-xl-6">
-                      <ShopTopRight selectHandleFilter={selectHandleFilter} />
+                      <ShopTopRight selectHandleFilter={selectHandleFilter} isSidebar={true} />
                     </div>
                   </div>
                 </div>

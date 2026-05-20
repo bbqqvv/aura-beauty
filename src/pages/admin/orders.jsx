@@ -161,6 +161,9 @@ const AdminOrders = () => {
                       )}
                       {order.status?.toLowerCase() === 'processing' && (
                         <>
+                          <button onClick={() => updateStatus(order._id, 'pending')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: '#e2e8f0', color: '#475569', borderRadius: '4px' }} title="Quay lại Chờ xử lý">
+                            Hoàn tác
+                          </button>
                           <button onClick={() => updateStatus(order._id, 'delivered')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--admin-success)', color: 'white', borderRadius: '4px' }}>
                             Đã giao
                           </button>
@@ -168,6 +171,16 @@ const AdminOrders = () => {
                             Hủy
                           </button>
                         </>
+                      )}
+                      {order.status?.toLowerCase() === 'delivered' && (
+                        <button onClick={() => updateStatus(order._id, 'processing')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: '#e2e8f0', color: '#475569', borderRadius: '4px' }} title="Quay lại Đang xử lý">
+                          Hoàn tác
+                        </button>
+                      )}
+                      {order.status?.toLowerCase() === 'cancel' && (
+                        <button onClick={() => updateStatus(order._id, 'pending')} className="admin-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: '#e2e8f0', color: '#475569', borderRadius: '4px' }} title="Khôi phục về Chờ xử lý">
+                          Khôi phục
+                        </button>
                       )}
                     </div>
                   </td>
@@ -184,6 +197,64 @@ const AdminOrders = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--admin-border)', paddingBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Chi tiết Đơn hàng: #{selectedOrder._id.slice(-6).toUpperCase()}</h3>
               <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-text-sub)' }}><X size={24} /></button>
+            </div>
+            
+            {/* Cập nhật trạng thái đơn hàng */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between', 
+              background: '#f8fafc', 
+              padding: '1rem 1.5rem', 
+              borderRadius: '8px', 
+              marginBottom: '1.5rem',
+              border: '1px solid var(--admin-border)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontWeight: 600, color: 'var(--admin-text-main)' }}>Trạng thái hiện tại:</span>
+                <span className="admin-badge" style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '0.25rem',
+                  color: selectedOrder.status?.toLowerCase() === 'cancel' ? 'var(--admin-danger)' : getStatusColor(selectedOrder.status),
+                  background: selectedOrder.status?.toLowerCase() === 'cancel' ? 'rgba(253, 75, 107, 0.1)' : getStatusBgColor(selectedOrder.status),
+                  fontSize: '0.8rem',
+                  padding: '0.25rem 0.5rem'
+                }}>
+                  {selectedOrder.status?.toLowerCase() === 'cancel' ? <X size={14} /> : getStatusIcon(selectedOrder.status)} 
+                  {selectedOrder.status?.toLowerCase() === 'pending' ? 'Chờ xử lý' : 
+                   selectedOrder.status?.toLowerCase() === 'processing' ? 'Đang xử lý' : 
+                   selectedOrder.status?.toLowerCase() === 'delivered' ? 'Đã giao' : 
+                   selectedOrder.status?.toLowerCase() === 'cancel' ? 'Đã hủy' : selectedOrder.status}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--admin-text-sub)', fontWeight: 500 }}>Thay đổi trạng thái:</span>
+                <select 
+                  value={selectedOrder.status} 
+                  onChange={async (e) => {
+                    const newStatus = e.target.value;
+                    await updateStatus(selectedOrder._id, newStatus);
+                    setSelectedOrder(prev => ({ ...prev, status: newStatus }));
+                  }}
+                  style={{
+                    padding: '0.4rem 1.5rem 0.4rem 0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--admin-border)',
+                    outline: 'none',
+                    fontWeight: '500',
+                    fontSize: '0.85rem',
+                    color: 'var(--admin-text-main)',
+                    backgroundColor: '#ffffff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="pending">Chờ xử lý</option>
+                  <option value="processing">Đang xử lý</option>
+                  <option value="delivered">Đã giao</option>
+                  <option value="cancel">Đã hủy</option>
+                </select>
+              </div>
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
