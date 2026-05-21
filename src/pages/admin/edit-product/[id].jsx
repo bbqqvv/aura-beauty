@@ -114,9 +114,9 @@ const EditProduct = () => {
     const newValue = type === 'checkbox' ? checked : value;
     
     if (name === 'title') {
-      setFormData({ ...formData, [name]: newValue, slug: slugify(newValue) });
+      setFormData(prev => ({ ...prev, [name]: newValue, slug: slugify(newValue) }));
     } else {
-      setFormData({ ...formData, [name]: newValue });
+      setFormData(prev => ({ ...prev, [name]: newValue }));
     }
   };
 
@@ -201,7 +201,7 @@ const EditProduct = () => {
             <div className="admin-form-group">
               <label>Mô tả chi tiết <span style={{color: 'red'}}>*</span></label>
               <div style={{ background: '#fff' }}>
-                <ReactQuill theme="snow" value={formData.description} onChange={(val) => setFormData({...formData, description: val})} style={{ height: '200px', marginBottom: '50px' }} />
+                <ReactQuill theme="snow" value={formData.description} onChange={(val) => setFormData(prev => ({ ...prev, description: val }))} style={{ height: '200px', marginBottom: '50px' }} />
               </div>
             </div>
 

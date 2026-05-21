@@ -252,7 +252,7 @@ const AdminBlogs = () => {
               <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
                 <label>Nội dung chi tiết</label>
                 <div style={{ background: '#fff', paddingBottom: '40px' }}>
-                  <ReactQuill theme="snow" value={formData.desc} onChange={(val) => setFormData({...formData, desc: val})} style={{ height: '200px' }} />
+                  <ReactQuill theme="snow" value={formData.desc} onChange={(val) => setFormData(prev => ({ ...prev, desc: val }))} style={{ height: '200px' }} />
                 </div>
               </div>
 
