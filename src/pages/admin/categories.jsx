@@ -5,6 +5,8 @@ import { Edit, Trash2, Plus, Image as ImageIcon, X, Save } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
 import { useGetAllCategoryQuery, useDeleteCategoryMutation, useAddCategoryMutation, useUpdateCategoryMutation } from '@/redux/features/categoryApi';
 import Loader from '@/components/loader/loader';
+import { notifySuccess } from '@/utils/toast';
+
 
 const AdminCategories = () => {
   const { data: categories, isLoading, isError, refetch } = useGetAllCategoryQuery();

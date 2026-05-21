@@ -326,7 +326,7 @@ const AdminCoupons = () => {
                   onClick={() => {
                     setFormData({
                       title: 'Khuyến Mãi Mùa Hè',
-                      logo: '/assets/img/product/premium-cosmetic.png',
+                      logo: 'https://i.ibb.co/1dZNNGh/beauty-category-3.jpg',
                       couponCode: 'SUMMER' + Math.floor(Math.random() * 100),
                       discountPercentage: 20,
                       minimumAmount: 50,

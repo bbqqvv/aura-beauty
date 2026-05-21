@@ -5,6 +5,7 @@ import { Edit, Trash2, Plus, Image as ImageIcon, X, Save } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
 import { useGetAllBrandsQuery, useDeleteBrandMutation, useAddBrandMutation, useUpdateBrandMutation } from '@/redux/features/brandApi';
 import Loader from '@/components/loader/loader';
+import { notifySuccess } from '@/utils/toast';
 
 const Adminbrands = () => {
   const { data: brands, isLoading, isError, refetch } = useGetAllBrandsQuery();

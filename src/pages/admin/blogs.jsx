@@ -196,7 +196,7 @@ const AdminBlogs = () => {
                         author: 'Admin Aura',
                         category: 'Skincare',
                         tags: 'chăm sóc da, mùa hè, làm đẹp',
-                        img: '/assets/img/product/premium-cosmetic.png',
+                        img: 'https://i.ibb.co/nkQK0Xr/beauty-category-4.jpg',
                         sm_desc: 'Mùa hè nắng nóng luôn là nỗi ám ảnh với làn da. Khám phá 10 bí quyết đơn giản giúp da luôn tươi sáng và rạng rỡ.',
                         desc: '<p>Chi tiết bài viết mẫu dành cho chức năng blog. Bạn có thể chèn ảnh, định dạng văn bản tại đây.</p>',
                         status: 'active'
