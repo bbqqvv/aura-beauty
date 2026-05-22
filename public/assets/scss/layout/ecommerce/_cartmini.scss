@@ -253,7 +253,7 @@
     }
     &__checkout{
         padding-top: 15px;
-        padding-bottom: 85px;
+        padding-bottom: 25px;
         width: 100%;
         background: var(--tp-common-white);
         border-top: 2px solid var(--tp-border-primary);
@@ -305,10 +305,10 @@
         font-weight: 500;
     }
     &__empty{
-        margin-top: 150px;
+        margin-top: 40px;
 
         & img{
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         & p{

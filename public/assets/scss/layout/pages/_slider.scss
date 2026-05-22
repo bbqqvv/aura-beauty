@@ -450,6 +450,10 @@
         }
     }
     &-content-3{
+        transform: translateY(-45px);
+        @media #{$sm, $xs}{
+            transform: translateY(0);
+        }
         & > span{
             font-family: var(--tp-ff-charm);
             font-weight: 400;
@@ -461,18 +465,22 @@
         }
     }
     &-height-3{
-        min-height: 950px;
+        height: 100vh;
+        min-height: 750px;
 
         @media #{$lg}{
-            min-height: 850px;
+            height: 100vh;
+            min-height: 700px;
         }
 
         @media #{$md}{
-            min-height: 750px;
+            height: 100vh;
+            min-height: 650px;
         }
 
         @media #{$sm, $xs}{
-            min-height: 650px;
+            height: 90vh;
+            min-height: 550px;
         }
     }
     &-thumb-3{
