@@ -27,7 +27,8 @@ const AddProduct = () => {
   const [formData, setFormData] = useState({
     title: '', slug: '', price: '', discount: '', quantity: '', sku: '', 
     category: '', children: '', brand: '', img: '', description: '', sizes: '',
-    unit: 'pc', status: 'in-stock', tags: '', featured: false
+    unit: 'pc', status: 'in-stock', tags: '', featured: false,
+    offerStartDate: '', offerEndDate: ''
   });
 
   // Calculate available children based on selected category
@@ -136,6 +137,13 @@ const AddProduct = () => {
         imageURLs: imageURLs.filter(img => img.img), // only keep if URL is provided
         additionalInformation: additionalInfo.filter(info => info.key && info.value)
       };
+
+      if (formData.offerStartDate && formData.offerEndDate) {
+        payload.offerDate = {
+          startDate: new Date(formData.offerStartDate).toISOString(),
+          endDate: new Date(formData.offerEndDate).toISOString()
+        };
+      }
       await addProduct(payload).unwrap();
       router.push('/admin/products');
     } catch (err) {
@@ -226,6 +234,19 @@ const AddProduct = () => {
                 <input type="number" name="discount" value={formData.discount} onChange={handleChange} placeholder="0" className="admin-input-premium" />
               </div>
             </div>
+
+            {Number(formData.discount) > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem' }}>
+                <div className="admin-form-group">
+                  <label>Ngày bắt đầu Flash Sale</label>
+                  <input type="datetime-local" name="offerStartDate" value={formData.offerStartDate} onChange={handleChange} className="admin-input-premium" />
+                </div>
+                <div className="admin-form-group">
+                  <label>Ngày kết thúc Flash Sale</label>
+                  <input type="datetime-local" name="offerEndDate" value={formData.offerEndDate} onChange={handleChange} className="admin-input-premium" />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="glass-panel" style={{ marginBottom: '1rem', padding: '1rem' }}>

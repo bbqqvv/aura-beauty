@@ -17,10 +17,10 @@ const useSearchFormSubmit = () => {
         setCategory("");
       }
 
-      router.push(route, null, { scroll: false });
+      router.push(route);
       setSearchText("");
     } else {
-      router.push(`/`, null, { scroll: false });
+      router.push(`/`);
       setSearchText("");
       setCategory("");
     }

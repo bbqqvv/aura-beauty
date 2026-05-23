@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
 import { useDispatch } from 'react-redux';
 import Link from 'next/link';
+import dayjs from 'dayjs';
 // internal
 import { AskQuestion, CompareTwo, WishlistTwo } from '@/svg';
 import DetailsBottomInfo from './details-bottom-info';
@@ -17,6 +18,7 @@ const DetailsWrapper = ({ productItem, handleImageActive, activeImg, detailsBott
   const [ratingVal, setRatingVal] = useState(0);
   const [textMore, setTextMore] = useState(false);
   const dispatch = useDispatch()
+  const isOfferActive = discount > 0 && (!offerDate?.endDate || dayjs().isBefore(dayjs(offerDate.endDate)));
 
   useEffect(() => {
     if (reviews && reviews.length > 0) {
@@ -78,7 +80,7 @@ const DetailsWrapper = ({ productItem, handleImageActive, activeImg, detailsBott
 
       {/* price */}
       <div className="tp-product-details-price-wrapper mb-20">
-        {discount > 0 ? (
+        {isOfferActive ? (
           <>
             <span className="tp-product-details-price old-price">${price}</span>
             <span className="tp-product-details-price new-price">
@@ -114,7 +116,9 @@ const DetailsWrapper = ({ productItem, handleImageActive, activeImg, detailsBott
       </div>}
 
       {/* if ProductDetailsCountdown true start */}
-      {offerDate?.endDate && <ProductDetailsCountdown offerExpiryTime={offerDate?.endDate} />}
+      {offerDate?.endDate && dayjs().isBefore(dayjs(offerDate.endDate)) && (
+        <ProductDetailsCountdown offerExpiryTime={offerDate.endDate} />
+      )}
       {/* if ProductDetailsCountdown true end */}
 
       {/* actions */}

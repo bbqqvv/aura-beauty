@@ -96,8 +96,8 @@ const ShopListItem = ({ product }) => {
           <div className="tp-product-price-wrapper-2">
             {discount > 0 ? (
               <>
-                <span className="tp-product-price-2 new-price">${price}</span>
-                <span className="tp-product-price-2 old-price">
+                <span className="tp-product-price-2 old-price">${price}</span>
+                <span className="tp-product-price-2 new-price">
                   {" "} ${(Number(price) - (Number(price) * Number(discount)) / 100).toFixed(2)}
                 </span>
               </>
