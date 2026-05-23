@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { Rating } from "react-simple-star-rating";
+import dayjs from "dayjs";
 // internal
 import { add_cart_product } from "@/redux/features/cartSlice";
 import { remove_compare_product } from "@/redux/features/compareSlice";
@@ -28,9 +29,9 @@ const CompareArea = () => {
             <div className="col-xl-12">
               {compareItems.length === 0 && (
                 <div className="text-center pt-50">
-                  <h3>No Compare Items Found</h3>
+                  <h3>Không tìm thấy sản phẩm nào trong danh sách so sánh</h3>
                   <Link href="/shop" className="tp-cart-checkout-btn mt-20">
-                    Continue Shipping
+                    Tiếp tục mua sắm
                   </Link>
                 </div>
               )}
@@ -39,7 +40,7 @@ const CompareArea = () => {
                   <table className="table">
                     <tbody>
                       <tr>
-                        <th>Product</th>
+                        <th>Sản phẩm</th>
                         {compareItems.map(item => (
                           <td key={item._id} className="">
                             <div className="tp-compare-thumb">
@@ -48,6 +49,7 @@ const CompareArea = () => {
                                 alt="compare"
                                 width={205}
                                 height={176}
+                                style={{ objectFit: 'cover', borderRadius: '8px' }}
                               />
                               <h4 className="tp-compare-product-title">
                                 <Link href={`/product-details/${item._id}`}>
@@ -60,45 +62,74 @@ const CompareArea = () => {
                       </tr>
                       {/* Description */}
                       <tr>
-                        <th>Description</th>
+                        <th>Mô tả</th>
                         {compareItems.map(item => (
                           <td key={item._id}>
-                            <div className="tp-compare-desc">
+                            <div className="tp-compare-desc text-start" style={{ maxWdith: '250px', margin: '0 auto', fontSize: '14px', lineHeight: '1.5' }}>
                               <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing
-                                elit. Ad, distinctio.
+                                {item.description 
+                                  ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 100) + '...'
+                                  : 'Chưa có mô tả chi tiết cho sản phẩm này.'}
                               </p>
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                      {/* Category */}
+                      <tr>
+                        <th>Danh mục</th>
+                        {compareItems.map(item => (
+                          <td key={item._id}>
+                            <div className="tp-compare-category" style={{ fontSize: '14px', fontWeight: '500', color: '#666' }}>
+                              <span>{item.category?.name || 'Chưa phân loại'}</span>
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                      {/* Status */}
+                      <tr>
+                        <th>Trạng thái</th>
+                        {compareItems.map(item => (
+                          <td key={item._id}>
+                            <div className="tp-compare-status">
+                              <span className={`badge ${item.status === 'in-stock' ? 'bg-success' : 'bg-danger'}`} style={{ fontSize: '12px', padding: '6px 12px', borderRadius: '4px' }}>
+                                {item.status === 'in-stock' ? 'Còn hàng' : 'Hết hàng'}
+                              </span>
                             </div>
                           </td>
                         ))}
                       </tr>
                       {/* Price */}
                       <tr>
-                        <th>Price</th>
-                        {compareItems.map(item => (
-                          <td key={item._id}>
-                            <div className="tp-compare-price">
-                              <span>${item.price.toFixed(2)}</span>
-                            </div>
-                          </td>
-                        ))}
-                      </tr>
-                      {/* Add to cart*/}
-                      <tr>
-                        <th>Add to cart</th>
-                        {compareItems.map(item => (
-                          <td key={item._id}>
-                            <div className="tp-compare-add-to-cart">
-                              <button onClick={() => handleAddProduct(item)} type="button" className="tp-btn">
-                                Add to Cart
-                              </button>
-                            </div>
-                          </td>
-                        ))}
+                        <th>Giá bán</th>
+                        {compareItems.map(item => {
+                          const isOfferActive = item.discount > 0 && (!item.offerDate?.endDate || dayjs().isBefore(dayjs(item.offerDate.endDate)));
+                          const discountedPrice = isOfferActive ? item.price - (item.price * item.discount) / 100 : item.price;
+                          return (
+                            <td key={item._id}>
+                              <div className="tp-compare-price">
+                                {isOfferActive ? (
+                                  <div className="d-flex flex-column align-items-center gap-1">
+                                    <span style={{ fontSize: '13px', textDecoration: 'line-through', color: '#a0a0a0', fontWeight: 'normal' }}>
+                                      ${item.price.toFixed(2)}
+                                    </span>
+                                    <span style={{ fontSize: '16px', fontWeight: '600', color: '#825a2c' }}>
+                                      ${discountedPrice.toFixed(2)}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span style={{ fontSize: '16px', fontWeight: '600', color: '#825a2c' }}>
+                                    ${item.price.toFixed(2)}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
                       </tr>
                       {/* Rating */}
                       <tr>
-                        <th>Rating</th>
+                        <th>Đánh giá</th>
                         {compareItems.map(item => (
                           <td key={item._id}>
                             <div className="tp-compare-rating">
@@ -112,9 +143,22 @@ const CompareArea = () => {
                           </td>
                         ))}
                       </tr>
+                      {/* Add to cart*/}
+                      <tr>
+                        <th>Giỏ hàng</th>
+                        {compareItems.map(item => (
+                          <td key={item._id}>
+                            <div className="tp-compare-add-to-cart">
+                              <button onClick={() => handleAddProduct(item)} type="button" className="tp-btn">
+                                Thêm vào giỏ
+                              </button>
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
                       {/* Remove */}
                       <tr>
-                        <th>Remove</th>
+                        <th>Xóa khỏi danh sách</th>
                         {compareItems.map(item => (
                           <td key={item._id}>
                             <div className="tp-compare-remove">

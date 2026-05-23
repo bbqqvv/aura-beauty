@@ -9,9 +9,9 @@ import CommonBreadcrumb from '@/components/breadcrumb/common-breadcrumb';
 const ComparePage = () => {
   return (
     <Wrapper>
-      <SEO pageTitle="Shop" />
+      <SEO pageTitle="So sánh sản phẩm" />
       <HeaderTwo style_2={true} />
-      <CommonBreadcrumb title="Compare" subtitle="Compare" />
+      <CommonBreadcrumb title="So sánh sản phẩm" subtitle="So sánh" />
       <CompareArea/>
       <Footer primary_style={true} />
     </Wrapper>
