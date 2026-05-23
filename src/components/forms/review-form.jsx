@@ -1,4 +1,5 @@
 import React,{useState} from "react";
+import Link from "next/link";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -7,6 +8,7 @@ import * as Yup from "yup";
 // internal
 import ErrorMsg from "../common/error-msg";
 import { useAddReviewMutation } from "@/redux/features/reviewApi";
+import { useGetUserOrdersQuery } from "@/redux/features/order/orderApi";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
 // schema
@@ -20,6 +22,11 @@ const ReviewForm = ({product_id, onSuccess}) => {
   const { user } = useSelector((state) => state.auth);
   const [rating, setRating] = useState(0);
   const [addReview, {}] = useAddReviewMutation();
+  const { data: userOrders, isLoading } = useGetUserOrdersQuery(undefined, { skip: !user });
+
+  const hasPurchased = userOrders?.some(order => 
+    order.cart?.some(item => item._id === product_id)
+  );
 
   // Catch Rating value
   const handleRating = (rate) => {
@@ -55,6 +62,31 @@ const ReviewForm = ({product_id, onSuccess}) => {
     }
     reset();
   };
+
+  if (!user) {
+    return (
+      <div className="text-center p-4 bg-light rounded-3 border" style={{ marginTop: '20px' }}>
+        <p className="mb-3 text-muted">Vui lòng đăng nhập để đánh giá sản phẩm này.</p>
+        <Link href="/login" className="tp-btn tp-btn-border" style={{ padding: '8px 24px', fontSize: '0.9rem', display: 'inline-block', textDecoration: 'none' }}>
+          Đăng nhập ngay
+        </Link>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <div className="text-center p-4 text-muted">Đang xác thực thông tin mua hàng...</div>;
+  }
+
+  if (!hasPurchased) {
+    return (
+      <div className="p-4 bg-light rounded-3 border text-center animate-fade" style={{ marginTop: '20px' }}>
+        <p className="mb-0 text-muted" style={{ fontWeight: 500 }}>
+          🔒 Chỉ những khách hàng đã mua sản phẩm này mới có thể viết đánh giá.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
