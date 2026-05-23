@@ -24,7 +24,7 @@ const ReviewForm = ({product_id, onSuccess}) => {
   const [addReview, {}] = useAddReviewMutation();
   const { data: userOrders, isLoading } = useGetUserOrdersQuery(undefined, { skip: !user });
 
-  const hasPurchased = userOrders?.some(order => 
+  const hasPurchased = userOrders?.orders?.some(order => 
     order.cart?.some(item => item._id === product_id)
   );
 
