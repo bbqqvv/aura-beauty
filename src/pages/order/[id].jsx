@@ -20,7 +20,9 @@ const SingleOrder = ({ params }) => {
   const orderId = router.query.id || params?.id;
   const printRef = useRef();
   const [reviewProductId, setReviewProductId] = useState(null);
-  const { data: order, isError, isLoading } = useGetUserOrderByIdQuery(orderId);
+  const { data: order, isError, isLoading } = useGetUserOrderByIdQuery(orderId, {
+    skip: !orderId
+  });
 
   useEffect(() => {
     if (order?.order && router.query.review === 'true') {
@@ -30,14 +32,13 @@ const SingleOrder = ({ params }) => {
       }
     }
   }, [order, router.query]);
+  
   let content = null;
-  if (isLoading) {
-    content = <PrdDetailsLoader loading={isLoading}/>
-  }
-  if (isError) {
+  if (isLoading || !orderId) {
+    content = <PrdDetailsLoader loading={true}/>
+  } else if (isError) {
     content = <ErrorMsg msg="There was an error" />;
-  }
-  if (!isLoading && !isError) {
+  } else if (order && order.order) {
     const { name, country, city, contact, invoice, createdAt, cart, shippingCost, discount, totalAmount,paymentMethod, status} = order.order;
     content = (
       <>

@@ -39,8 +39,8 @@ const MyOrders = ({ orderData }) => {
                   {dayjs(item.createdAt).format("MMMM D, YYYY")}
                 </td>
                 <td
-                  data-info={`status ${item.status === "Pending" ? "pending" : ""}  ${item.status === "Processing" ? "hold" : ""}  ${item.status === "Delivered" ? "done" : ""}`}
-                  className={`status ${item.status === "Pending" ? "pending" : ""} ${item.status === "Processing" ? "hold" : ""}  ${item.status === "Delivered" ? "done" : ""}`}
+                  data-info={`status ${item.status?.toLowerCase() === "pending" ? "pending" : ""}  ${item.status?.toLowerCase() === "processing" ? "hold" : ""}  ${item.status?.toLowerCase() === "delivered" ? "done" : ""}`}
+                  className={`status ${item.status?.toLowerCase() === "pending" ? "pending" : ""} ${item.status?.toLowerCase() === "processing" ? "hold" : ""}  ${item.status?.toLowerCase() === "delivered" ? "done" : ""}`}
                 >
                   {item.status}
                 </td>
