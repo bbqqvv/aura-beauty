@@ -22,7 +22,15 @@ export const reviewApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Reviews", "Products"],
     }),
+    replyReview: builder.mutation({
+      query: ({ id, reply }) => ({
+        url: `/api/review/reply/${id}`,
+        method: "PUT",
+        body: { reply },
+      }),
+      invalidatesTags: ["Reviews", "Products"],
+    }),
   }),
 });
 
-export const {useAddReviewMutation, useGetAllReviewsQuery, useDeleteReviewMutation} = reviewApi;
+export const {useAddReviewMutation, useGetAllReviewsQuery, useDeleteReviewMutation, useReplyReviewMutation} = reviewApi;

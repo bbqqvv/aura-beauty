@@ -4,7 +4,7 @@ import React from "react";
 import { Rating } from "react-simple-star-rating";
 
 const ReviewItem = ({ review }) => {
-  const { comment, createdAt, rating, userId } = review || {};
+  const { comment, createdAt, rating, userId, reply } = review || {};
   return (
     <div className="tp-product-details-review-avater d-flex align-items-start">
       <div className="tp-product-details-review-avater-thumb">
@@ -27,6 +27,15 @@ const ReviewItem = ({ review }) => {
             {comment}
           </p>
         </div>
+
+        {reply && (
+          <div className="tp-product-details-review-avater-reply ms-4 mt-3 p-3 bg-light rounded" style={{ borderLeft: '3px solid var(--tp-theme-primary)' }}>
+            <h5 className="review-name-reply mb-1" style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--tp-theme-primary)' }}>
+              Phản hồi từ Aura Shop:
+            </h5>
+            <p className="mb-0" style={{ fontSize: '0.875rem', color: '#555' }}>{reply}</p>
+          </div>
+        )}
       </div>
     </div>
   );
