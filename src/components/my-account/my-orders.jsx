@@ -45,9 +45,16 @@ const MyOrders = ({ orderData }) => {
                   {item.status}
                 </td>
                 <td>
-                  <Link href={`/order/${item._id}`} className="tp-logout-btn">
-                    Invoice
-                  </Link>
+                  <div className="d-flex align-items-center gap-2">
+                    <Link href={`/order/${item._id}`} className="tp-logout-btn" style={{ padding: '6px 12px', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                      Invoice
+                    </Link>
+                    {item.status?.toLowerCase() === "delivered" && (
+                      <Link href={`/order/${item._id}?review=true`} className="tp-btn tp-btn-black" style={{ padding: '6px 14px', fontSize: '13px', backgroundColor: 'var(--tp-theme-primary)', borderColor: 'var(--tp-theme-primary)', color: '#fff', whiteSpace: 'nowrap' }}>
+                        Đánh giá
+                      </Link>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

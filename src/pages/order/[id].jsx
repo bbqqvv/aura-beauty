@@ -16,10 +16,20 @@ import ReviewForm from "@/components/forms/review-form";
 
 
 const SingleOrder = ({ params }) => {
-  const orderId = params.id;
+  const router = useRouter();
+  const orderId = router.query.id || params?.id;
   const printRef = useRef();
   const [reviewProductId, setReviewProductId] = useState(null);
   const { data: order, isError, isLoading } = useGetUserOrderByIdQuery(orderId);
+
+  useEffect(() => {
+    if (order?.order && router.query.review === 'true') {
+      const cart = order.order.cart;
+      if (cart && cart.length === 1) {
+        setReviewProductId(cart[0]._id);
+      }
+    }
+  }, [order, router.query]);
   let content = null;
   if (isLoading) {
     content = <PrdDetailsLoader loading={isLoading}/>
