@@ -1,9 +1,24 @@
 import React, { useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useGetUserOrdersQuery } from '@/redux/features/order/orderApi';
 import ReviewForm from '../forms/review-form';
 import ReviewItem from './review-item';
 
 const DetailsTabNav = ({ product }) => {
   const {_id, description, additionalInformation, reviews } = product || {};
+  const { user } = useSelector((state) => state.auth);
+  const { data: userOrders } = useGetUserOrdersQuery(undefined, { skip: !user });
+
+  // Count reviews this user has submitted for this product
+  const userReviewCount = reviews?.filter(r => (r.userId?._id || r.userId) === user?._id).length || 0;
+
+  // Count orders this user has placed containing this product
+  const userOrderCount = userOrders?.orders?.filter(order => 
+    order.cart?.some(item => item._id === _id)
+  ).length || 0;
+
+  const canReview = user && userOrderCount > userReviewCount;
+
   const activeRef = useRef(null)
   const marker = useRef(null);
   // handleActive
@@ -112,33 +127,52 @@ const DetailsTabNav = ({ product }) => {
           {/* review */}
           <div className="tab-pane fade" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab" tabIndex="-1">
             <div className="tp-product-details-review-wrapper pt-60">
-              <div className="row">
-                <div className="col-lg-6">
-                  <div className="tp-product-details-review-statics">
-
-                    {/* reviews */}
-                    <div className="tp-product-details-review-list pr-110">
-                      <h3 className="tp-product-details-review-title">Xếp hạng & Đánh giá</h3>
-                      {reviews.length === 0 && <h3 className="tp-product-details-review-title">
-                        Chưa có đánh giá nào.
-                      </h3>
-                      }
-                      {reviews.length > 0 && reviews.map(item => (
-                        <ReviewItem key={item._id} review={item} />
-                      ))}
+              {canReview ? (
+                <div className="row">
+                  <div className="col-lg-6">
+                    <div className="tp-product-details-review-statics">
+                      {/* reviews */}
+                      <div className="tp-product-details-review-list pr-110">
+                        <h3 className="tp-product-details-review-title">Xếp hạng & Đánh giá</h3>
+                        {reviews.length === 0 && <h3 className="tp-product-details-review-title">
+                          Chưa có đánh giá nào.
+                        </h3>
+                        }
+                        {reviews.length > 0 && reviews.map(item => (
+                          <ReviewItem key={item._id} review={item} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="tp-product-details-review-form">
+                      <h3 className="tp-product-details-review-form-title">Đánh giá sản phẩm này</h3>
+                      <p>Email của bạn sẽ không được hiển thị công khai. Các trường bắt buộc được đánh dấu *</p>
+                      {/* form start */}
+                      <ReviewForm product_id={_id} />
+                      {/* form end */}
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-6">
-                  <div className="tp-product-details-review-form">
-                    <h3 className="tp-product-details-review-form-title">Đánh giá sản phẩm này</h3>
-                    <p>Email của bạn sẽ không được hiển thị công khai. Các trường bắt buộc được đánh dấu *</p>
-                    {/* form start */}
-                    <ReviewForm product_id={_id} />
-                    {/* form end */}
+              ) : (
+                <div className="row justify-content-center">
+                  <div className="col-xl-7 col-lg-9 col-md-10">
+                    <div className="tp-product-details-review-statics">
+                      {/* reviews */}
+                      <div className="tp-product-details-review-list">
+                        <h3 className="tp-product-details-review-title text-center mb-4">Xếp hạng & Đánh giá</h3>
+                        {reviews.length === 0 && <h3 className="tp-product-details-review-title text-center">
+                          Chưa có đánh giá nào.
+                        </h3>
+                        }
+                        {reviews.length > 0 && reviews.map(item => (
+                          <ReviewItem key={item._id} review={item} />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
