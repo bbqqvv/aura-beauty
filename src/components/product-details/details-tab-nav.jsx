@@ -18,6 +18,25 @@ const DetailsTabNav = ({ product }) => {
       marker.current.style.left = activeRef.current.offsetLeft + 'px';
       marker.current.style.width = activeRef.current.offsetWidth + 'px';
     }
+
+    // Auto switch to review tab and scroll if hash or query is present
+    if (typeof window !== 'undefined') {
+      const checkAndScroll = () => {
+        const hash = window.location.hash;
+        const search = window.location.search;
+        if (hash === '#nav-review' || search.includes('tab=review')) {
+          const reviewTabBtn = document.getElementById('nav-review-tab');
+          if (reviewTabBtn) {
+            reviewTabBtn.click();
+            setTimeout(() => {
+              reviewTabBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+          }
+        }
+      };
+      // Run with a slight delay to ensure the page has finished loading layout
+      setTimeout(checkAndScroll, 500);
+    }
   }, []);
   // nav item
   function NavItem({ active = false, id, title, linkRef }) {

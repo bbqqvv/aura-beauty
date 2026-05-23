@@ -166,7 +166,7 @@ const AdminReviews = () => {
                   <td>
                     <div className="d-flex align-items-center gap-2">
                       <Link 
-                        href={`/product-details/${review.productObj?._id}`} 
+                        href={`/product-details/${review.productObj?._id}?tab=review#nav-review`} 
                         target="_blank"
                         className="admin-btn d-inline-flex align-items-center justify-content-center" 
                         style={{ padding: '0.4rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: 'none', borderRadius: '4px', textDecoration: 'none' }} 
