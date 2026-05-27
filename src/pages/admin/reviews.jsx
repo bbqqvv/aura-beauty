@@ -296,7 +296,7 @@ const AdminReviews = () => {
                   <Rating readonly size={18} initialValue={selectedReview.rating || 0} />
                 </div>
                 <div className="p-3 rounded border" style={{ backgroundColor: '#fafafa', fontStyle: 'italic', color: '#475569', fontSize: '0.95rem' }}>
-                  "{selectedReview.comment}"
+                  &quot;{selectedReview.comment}&quot;
                 </div>
               </div>
 

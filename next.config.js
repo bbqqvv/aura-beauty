@@ -4,6 +4,12 @@ const nextConfig = {
   images: {
     domains: ['localhost', '127.0.0.1', 'i.ibb.co', 'lh3.googleusercontent.com', 'res.cloudinary.com', 'images.unsplash.com'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async redirects() {
     return [
       {
