@@ -26,22 +26,25 @@ const Wrapper = ({ children }) => {
     dispatch(initialOrderQuantity());
   }, [dispatch]);
 
-  return !authChecked ? (
-    <div
-      className="d-flex align-items-center justify-content-center"
-      style={{ height: "100vh" }}
-    >
-      <Loader spinner="fade" loading={!authChecked} />
-    </div>
-  ) : (
-    <div id="wrapper">
-      {children}
-      <BackToTopCom />
-      <ToastContainer />
-      {/* product modal start */}
-      {productItem && <ProductModal />}
-      {/* product modal end */}
-    </div>
+  return (
+    <>
+      {!authChecked && (
+        <div
+          className="d-flex align-items-center justify-content-center"
+          style={{ height: "100vh", position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "#fff", zIndex: 9999 }}
+        >
+          <Loader spinner="fade" loading={!authChecked} />
+        </div>
+      )}
+      <div id="wrapper" style={{ display: authChecked ? "block" : "none" }}>
+        {children}
+        <BackToTopCom />
+        <ToastContainer />
+        {/* product modal start */}
+        {productItem && <ProductModal />}
+        {/* product modal end */}
+      </div>
+    </>
   );
 };
 
