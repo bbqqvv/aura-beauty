@@ -35,7 +35,7 @@ const SEO = ({ pageTitle, description }) => {
       <meta name="twitter:description" content={desc} />
       <meta name="twitter:image" content={ogImage} />
 
-      <link rel="icon" href="/favicon.png" />
+      <link rel="icon" type="image/png" href="/logo.png" />
     </Head>
   );
 };
