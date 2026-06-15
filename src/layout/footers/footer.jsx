@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 // internal
 import PaymentOption from '@/ui/payment-option';
-import logo from '@assets/img/logo/logo.svg';
+import logo from '@assets/img/logo/logo.png';
 import social_data from '@/data/social-data';
 import { Email, Location } from '@/svg';
 

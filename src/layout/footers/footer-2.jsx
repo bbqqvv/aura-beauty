@@ -4,7 +4,7 @@ import Link from 'next/link';
 // internal
 import social_data from '@/data/social-data';
 import { Email, Location } from '@/svg';
-import logo from '@assets/img/logo/logo.svg';
+import logo from '@assets/img/logo/logo.png';
 import PaymentOption from '@/ui/payment-option';
 
 const FooterTwo = () => {

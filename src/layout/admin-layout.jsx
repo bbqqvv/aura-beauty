@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLoggedOut } from '@/redux/features/auth/authSlice';
 import Image from 'next/image';
-import logo from '@assets/img/logo/logo.svg';
+import logo from '@assets/img/logo/logo.png';
 
 import { 
   LayoutDashboard, 
