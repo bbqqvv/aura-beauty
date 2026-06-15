@@ -44,7 +44,7 @@ services:
       - MINIO_PORT=9000
       - MINIO_ACCESS_KEY=shofyadmin
       - MINIO_SECRET_KEY=shofypassword123
-      - MINIO_PUBLIC_URL=http://localhost:9005
+      - MINIO_PUBLIC_URL=http://103.38.237.39:9005
     depends_on:
       - minio
     restart: unless-stopped
