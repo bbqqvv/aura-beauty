@@ -3,3 +3,17 @@
 @import "swiper/css/bundle";
 @import 'node_modules/react-modal-video/scss/modal-video.scss';
 @import '../../public/assets/scss/main.scss';
+
+// Custom Website Logo Sizing Constraints
+.logo img,
+.tp-header-logo img,
+.tp-footer-logo img,
+.tp-offcanvas-logo img,
+.admin-logo img,
+.invoice__left img {
+  max-width: 140px !important;
+  max-height: 55px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+}
